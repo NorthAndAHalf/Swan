@@ -14,7 +14,7 @@ project "Snowdrift"
 
     buildoptions  { "/utf-8" }
 
-    files { SourceDir .. "**.cpp", SourceDir .. "**.h", SourceDir .. "*.c" }
+    files { SourceDir .. "**.cpp", SourceDir .. "**.h", SourceDir .. "*.c", "vendor/glad/src/glad.c" }
 
     includedirs 
     { 
