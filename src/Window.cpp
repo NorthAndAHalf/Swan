@@ -54,7 +54,7 @@ void Window::make_fullscreen()
 		return;
 	}
 
-	glfwSetWindowMonitor(glfwWindow, glfwGetPrimaryMonitor(), 0, 0, width, height, 0);
+	glfwSetWindowMonitor(glfwWindow, glfwGetPrimaryMonitor(), 0, 0, fullscreenWidth, fullscreenHeight, 0);
 	isFullscreen = true;
 }
 
@@ -66,7 +66,7 @@ void Window::make_windowed()
 		return;
 	}
 
-	glfwSetWindowMonitor(glfwWindow, glfwGetPrimaryMonitor(), 0, 0, fullscreenWidth, fullscreenHeight, 0);
+	glfwSetWindowMonitor(glfwWindow, NULL, 100, 100, width, height, 0);
 	isFullscreen = false;
 }
 
