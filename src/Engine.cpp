@@ -5,7 +5,7 @@
 Engine* Engine::instance = nullptr;
 std::mutex Engine::mtx;
 EventDispatcher* Engine::eventDispatcher = nullptr;
-bool Engine::isEventDispatcherSet = false;
+Window* Engine::primaryWindow = nullptr;
 
 Engine* Engine::get_engine()
 {
@@ -21,18 +21,24 @@ Engine* Engine::get_engine()
 
 void Engine::init()
 {
-    spdlog::info("Initialising Snowdrift");
+    spdlog::info("Initialising Engine");
 
-    if (!isEventDispatcherSet)
+    if (!eventDispatcher)
     {
         throw std::runtime_error("Engine event dispatcher not set");
     }
 
-    spdlog::info("Snowdrift initialised successfully");
+    if (!primaryWindow)
+    {
+        spdlog::trace("No primary window set for Engine, using default");
+        primaryWindow = new Window("Snowdrift", 1080, 1920, false);
+        primaryWindow->init();
+    }
+
+    spdlog::info("Engine initialised successfully");
 }
 
 void Engine::set_event_dispatcher(EventDispatcher* dispatcher)
 {
     eventDispatcher = dispatcher;
-    isEventDispatcherSet = true;
 }

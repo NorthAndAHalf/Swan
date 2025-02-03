@@ -38,6 +38,8 @@ void Window::init()
 		glfwTerminate();
 		throw std::runtime_error("Failed to initialise glad");
 	}
+
+	spdlog::info("Glad initialised on window: {0}", title);
 	
 	set_event_callbacks();
 
@@ -59,7 +61,6 @@ void Window::set_event_callbacks()
 			}
 			case GLFW_RELEASE:
 				Engine::get_engine()->get_event_dispatcher().dispatchKeyRelease(KeyReleaseEvent(key, scancode, mods));
-
 				break;
 			}
 		});
