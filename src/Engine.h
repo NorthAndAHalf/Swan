@@ -1,7 +1,6 @@
 #pragma once
 #include <mutex>
-#include "EventDispatcher.h"
-#include "Window.h"
+#include "Events/EventDispatcher.h"
 
 class Engine
 {
@@ -13,8 +12,7 @@ public:
 	void init();
 
 	void set_event_dispatcher(EventDispatcher* dispatcher);
-	void set_primary_window(Window* window);
-	Window* get_primary_window() { return primaryWindow; }
+	EventDispatcher& get_event_dispatcher() { return *eventDispatcher; }
 
 private:
 	Engine() {}
@@ -24,6 +22,4 @@ private:
 
 	static EventDispatcher* eventDispatcher;
 	static bool isEventDispatcherSet;
-
-	static Window* primaryWindow;
 };

@@ -1,6 +1,7 @@
 #pragma once
 #include <stdint.h>
 #include "GLFW/glfw3.h"
+#include "Events/EventDispatcher.h"
 
 class Window
 {
@@ -50,4 +51,6 @@ private:
 	bool isFullscreen;
 
 	GLFWwindow* glfwWindow;
+
+	void set_event_callbacks();
 };

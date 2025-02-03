@@ -1,7 +1,9 @@
 #include "glad/glad.h"
 #include "Window.h"
 #include "spdlog/spdlog.h"
-#include <stdexcept>t
+#include <stdexcept>
+#include "Events/Event.h"
+#include "Engine.h"
 
 Window::Window(const char* startTitle, uint32_t startHeight, uint32_t startWidth, bool startFullscreen)
 	: title(startTitle),
@@ -9,9 +11,8 @@ Window::Window(const char* startTitle, uint32_t startHeight, uint32_t startWidth
 	  width(startWidth),
 	  isFullscreen(startFullscreen)
 {
-	const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-	fullscreenHeight = mode->height;
-	fullscreenWidth = mode->width;
+	fullscreenHeight = 0;
+	fullscreenWidth = 0;
 	glfwWindow = nullptr;
 }
 
@@ -26,6 +27,10 @@ void Window::init()
 		glfwWindow = glfwCreateWindow(width, height, title, NULL, NULL);
 	}
 	
+	const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+	fullscreenHeight = mode->height;
+	fullscreenWidth = mode->width;
+
 	glfwMakeContextCurrent(glfwWindow);
 
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -34,9 +39,30 @@ void Window::init()
 		throw std::runtime_error("Failed to initialise glad");
 	}
 	
+	set_event_callbacks();
+
 	glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
 	glClearColor(255.0f, 0.0f, 255.0f, 1.0f);
+}
+
+void Window::set_event_callbacks()
+{
+	glfwSetKeyCallback(glfwWindow, [](GLFWwindow* window, int key, int scancode, int action, int mods)
+		{
+			switch (action)
+			{
+			case GLFW_PRESS:
+			{
+				Engine::get_engine()->get_event_dispatcher().dispatchKeyPress(KeyPressEvent(key, scancode, mods));
+				break;
+			}
+			case GLFW_RELEASE:
+				Engine::get_engine()->get_event_dispatcher().dispatchKeyRelease(KeyReleaseEvent(key, scancode, mods));
+
+				break;
+			}
+		});
 }
 
 void Window::update()
