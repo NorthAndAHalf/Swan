@@ -3,6 +3,7 @@
 #include "events/EventListener.h"
 #include "window.h"
 #include "services/GameService.h"
+#include "services/ImGuiService.h"
 
 #ifdef SD_DEBUG
 #define SPD_DEBUG_LEVEL(x) x;
@@ -40,12 +41,17 @@ int main()
 		return -1;
 	}
 
+	ImGuiService imguiService = ImGuiService();
+	imguiService.init();
 	GameService gameService = GameService();
+	Engine::get_engine()->get_event_dispatcher().subscribe(&imguiService);
 	Engine::get_engine()->get_event_dispatcher().subscribe(&gameService);
 
 	while (!Engine::get_engine()->get_primary_window()->window_should_close())
 	{
+		imguiService.begin_frame();
 		Engine::get_engine()->get_primary_window()->update();
 		gameService.update();
+		imguiService.end_frame();
 	}
 }

@@ -14,7 +14,22 @@ project "Snowdrift"
 
     buildoptions  { "/utf-8" }
 
-    files { SourceDir .. "**.cpp", SourceDir .. "**.h", SourceDir .. "*.c", "vendor/glad/src/glad.c" }
+    files 
+    { 
+        SourceDir .. "**.cpp", 
+        SourceDir .. "**.h", 
+        SourceDir .. "*.c", 
+        "vendor/glad/src/glad.c", 
+        "vendor/imgui/imgui/*.cpp", 
+        "vendor/imgui/imgui/*.h", 
+        "vendor/imgui/imgui/backends/imgui_impl_opengl3.cpp",
+        "vendor/imgui/imgui/backends/imgui_impl_opengl3.h", 
+        "vendor/imgui/imgui/backends/imgui_impl_glfw.cpp", 
+        "vendor/imgui/imgui/backends/imgui_impl_glfw.h",
+        "vendor/imgui/imgui/misc/debuggers/imgui.natvis",
+        "vendor/imgui/imgui/misc/debuggers/imgui.natstepfilter",
+        "vendor/imgui/imgui/misc/cpp/imgui_stdlib.*"
+     }
 
     includedirs 
     { 
@@ -24,7 +39,9 @@ project "Snowdrift"
         "vendor/glm",
         "vendor/spdlog/include",
         "vendor/stbimage",
-        "vendor/assimp/include"
+        "vendor/assimp/include",
+        "vendor/imgui",
+        "vendor/imgui/imgui"
     }
     libdirs 
     { 
