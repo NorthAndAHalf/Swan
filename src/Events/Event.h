@@ -4,6 +4,7 @@ class Event
 {
 public:
 	Event() {}
+	bool handled = false;
 };
 
 class KeyPressEvent : public Event

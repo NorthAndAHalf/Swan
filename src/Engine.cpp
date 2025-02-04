@@ -6,6 +6,7 @@ Engine* Engine::instance = nullptr;
 std::mutex Engine::mtx;
 EventDispatcher* Engine::eventDispatcher = nullptr;
 Window* Engine::primaryWindow = nullptr;
+bool Engine::isBlockingInputs = false;
 
 Engine* Engine::get_engine()
 {
@@ -45,11 +46,13 @@ void Engine::set_event_dispatcher(EventDispatcher* dispatcher)
 
 bool Engine::get_key(int keycode)
 {
+    if (isBlockingInputs) return false;
     return primaryWindow->get_key(keycode);
 }
 
 bool Engine::get_mouse_button(int button)
 {
+    if (isBlockingInputs) return false;
     return primaryWindow->get_mouse_button(button);
 }
 
@@ -72,4 +75,14 @@ double Engine::get_cursorY()
     double xpos, ypos;
     primaryWindow->get_cursor(&xpos, &ypos);
     return ypos;
+}
+
+void Engine::block_inputs()
+{
+    isBlockingInputs = true;
+}
+
+void Engine::unblock_inputs()
+{
+    isBlockingInputs = false;
 }

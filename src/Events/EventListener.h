@@ -7,6 +7,8 @@ class EventListener
 {
 	friend class EventDispatcher;
 private:
+	virtual void on_event(Event& e) {}
+
 	virtual void on_key_press_event(KeyPressEvent& e) {}
 	virtual void on_key_release_event(KeyReleaseEvent& e) {}
 

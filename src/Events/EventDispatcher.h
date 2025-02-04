@@ -10,6 +10,7 @@ public:
 	EventDispatcher();
 
 	void subscribe(EventListener* l);
+	void subscribe_overlay(EventListener* l);
 
 	void dispatch_key_press(KeyPressEvent e);
 	void dispatch_key_release(KeyReleaseEvent e);
@@ -20,4 +21,5 @@ public:
 
 private:
 	std::vector<EventListener*> listeners;
+	std::vector<EventListener*> overlay_listeners;
 };

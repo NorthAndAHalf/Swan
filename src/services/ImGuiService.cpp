@@ -30,13 +30,19 @@ void ImGuiService::begin_frame()
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
-	ImGui::ShowDemoWindow(); // Show demo window! :)
+	ImGui::ShowDemoWindow(); // Show demo window! :)3
+
+	if (ImGui::IsWindowFocused(ImGuiFocusedFlags_AnyWindow))
+	{
+		Engine::get_engine()->block_inputs();
+	}
 }
 
 void ImGuiService::end_frame()
 {
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	Engine::get_engine()->unblock_inputs();
 }
 
 void ImGuiService::shutdown()
@@ -44,4 +50,12 @@ void ImGuiService::shutdown()
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
+}
+
+void ImGuiService::on_event(Event& e)
+{
+	if (ImGui::IsWindowFocused(ImGuiFocusedFlags_AnyWindow))
+	{
+		e.handled = true;
+	}
 }

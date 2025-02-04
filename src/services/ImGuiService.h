@@ -11,4 +11,6 @@ public:
 	void begin_frame();
 	void end_frame();
 	void shutdown();
+
+	virtual void on_event(Event& e);
 };
