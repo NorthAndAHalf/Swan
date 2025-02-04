@@ -10,8 +10,13 @@ public:
 	EventDispatcher();
 
 	void subscribe(EventListener* l);
-	void dispatchKeyPress(KeyPressEvent e);
-	void dispatchKeyRelease(KeyReleaseEvent e);
+
+	void dispatch_key_press(KeyPressEvent e);
+	void dispatch_key_release(KeyReleaseEvent e);
+
+	void dispatch_mouse_move(MouseMoveEvent e);
+	void dispatch_mouse_press(MousePressEvent e);
+	void dispatch_mouse_release(MouseReleaseEvent e);
 
 private:
 	std::vector<EventListener*> listeners;

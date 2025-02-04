@@ -40,6 +40,11 @@ public:
 
 	bool window_should_close() { return glfwWindowShouldClose(glfwWindow); }
 
+	// Input Polling
+	bool get_key(int keycode);
+	bool get_mouse_button(int button);
+	void get_cursor(double* xpos, double* ypos);
+
 private:
 	const char* title;
 	uint32_t height;

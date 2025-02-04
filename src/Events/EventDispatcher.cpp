@@ -22,18 +22,42 @@ void EventDispatcher::subscribe(EventListener* l)
 // Then have a dispatch function that calls the right callbacks according to each event type
 // Not sure yet though
 
-void EventDispatcher::dispatchKeyPress(KeyPressEvent e)
+void EventDispatcher::dispatch_key_press(KeyPressEvent e)
 {
 	for (EventListener* l : listeners)
 	{
-		l->onKeyPressEvent(e);
+		l->on_key_press_event(e);
 	}
 }
 
-void EventDispatcher::dispatchKeyRelease(KeyReleaseEvent e)
+void EventDispatcher::dispatch_key_release(KeyReleaseEvent e)
 {
 	for (EventListener* l : listeners)
 	{
-		l->onKeyReleaseEvent(e);
+		l->on_key_release_event(e);
+	}
+}
+
+void EventDispatcher::dispatch_mouse_move(MouseMoveEvent e)
+{
+	for (EventListener* l : listeners)
+	{
+		l->on_mouse_move_event(e);
+	}
+}
+
+void EventDispatcher::dispatch_mouse_press(MousePressEvent e)
+{
+	for (EventListener* l : listeners)
+	{
+		l->on_mouse_press_event(e);
+	}
+}
+
+void EventDispatcher::dispatch_mouse_release(MouseReleaseEvent e)
+{
+	for (EventListener* l : listeners)
+	{
+		l->on_mouse_release_event(e);
 	}
 }

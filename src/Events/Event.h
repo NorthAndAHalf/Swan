@@ -25,3 +25,30 @@ public:
 	const int scancode;
 	const int mods;
 };
+
+class MouseMoveEvent : public Event
+{
+public:
+	MouseMoveEvent(double _xpos, double _ypos);
+
+	const double xpos;
+	const double ypos;
+};
+
+class MousePressEvent : public Event
+{
+public:
+	MousePressEvent(int _button, int _mods);
+
+	const int button;
+	const int mods;
+};
+
+class MouseReleaseEvent : public Event
+{
+public:
+	MouseReleaseEvent(int _button, int _mods);
+
+	const int button;
+	const int mods;
+};

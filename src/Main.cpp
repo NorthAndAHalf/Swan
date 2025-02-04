@@ -1,7 +1,8 @@
 #include "spdlog/spdlog.h"
 #include "Engine.h"
-#include "Events/EventListener.h"
+#include "events/EventListener.h"
 #include "window.h"
+#include "services/GameService.h"
 
 #ifdef SD_DEBUG
 #define SPD_DEBUG_LEVEL(x) x;
@@ -39,8 +40,12 @@ int main()
 		return -1;
 	}
 
+	GameService gameService = GameService();
+	Engine::get_engine()->get_event_dispatcher().subscribe(&gameService);
+
 	while (!Engine::get_engine()->get_primary_window()->window_should_close())
 	{
 		Engine::get_engine()->get_primary_window()->update();
+		gameService.update();
 	}
 }

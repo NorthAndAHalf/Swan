@@ -2,7 +2,7 @@
 #include "Window.h"
 #include "spdlog/spdlog.h"
 #include <stdexcept>
-#include "Events/Event.h"
+#include "events/Event.h"
 #include "Engine.h"
 
 Window::Window(const char* startTitle, uint32_t startHeight, uint32_t startWidth, bool startFullscreen)
@@ -56,12 +56,31 @@ void Window::set_event_callbacks()
 			{
 			case GLFW_PRESS:
 			{
-				Engine::get_engine()->get_event_dispatcher().dispatchKeyPress(KeyPressEvent(key, scancode, mods));
+				Engine::get_engine()->get_event_dispatcher().dispatch_key_press(KeyPressEvent(key, scancode, mods));
 				break;
 			}
 			case GLFW_RELEASE:
-				Engine::get_engine()->get_event_dispatcher().dispatchKeyRelease(KeyReleaseEvent(key, scancode, mods));
+				Engine::get_engine()->get_event_dispatcher().dispatch_key_release(KeyReleaseEvent(key, scancode, mods));
 				break;
+			}
+		});
+
+	glfwSetCursorPosCallback(glfwWindow, [](GLFWwindow* window, double xpos, double ypos)
+		{
+			Engine::get_engine()->get_event_dispatcher().dispatch_mouse_move(MouseMoveEvent(xpos, ypos));
+		});
+
+	glfwSetMouseButtonCallback(glfwWindow, [](GLFWwindow* window, int button, int action, int mods)
+		{
+			if (action == GLFW_PRESS)
+			{
+				Engine::get_engine()->get_event_dispatcher().dispatch_mouse_press(MousePressEvent(button, mods));
+				return;
+			}
+			if (action == GLFW_RELEASE)
+			{
+				Engine::get_engine()->get_event_dispatcher().dispatch_mouse_release(MouseReleaseEvent(button, mods));
+				return;
 			}
 		});
 }
@@ -103,4 +122,19 @@ void Window::toggle_fullscreen()
 		make_windowed();
 	else
 		make_fullscreen();
+}
+
+bool Window::get_key(int keycode)
+{
+	return glfwGetKey(glfwWindow, keycode) == GLFW_PRESS;
+}
+
+bool Window::get_mouse_button(int button)
+{
+	return glfwGetMouseButton(glfwWindow, button);
+}
+
+void Window::get_cursor(double* xpos, double* ypos)
+{
+	glfwGetCursorPos(glfwWindow, xpos, ypos);
 }
