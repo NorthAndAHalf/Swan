@@ -102,6 +102,11 @@ void Window::init_imgui()
 	ImGui_ImplOpenGL3_Init();
 }
 
+void Window::set_opengl_context()
+{
+	glfwMakeContextCurrent(glfwWindow);
+}
+
 void Window::make_fullscreen()
 {
 	if (!glfwWindow)

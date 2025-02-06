@@ -8,6 +8,7 @@
 
 ImGuiService::ImGuiService()
 {
+	
 }
 
 // Still need to handle inputs to imgui, as at the moment they go to both imgui and game service
@@ -19,6 +20,7 @@ void ImGuiService::init()
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // IF using Docking Branch
+	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
 	Engine::get_engine()->get_primary_window()->init_imgui();
 }
@@ -40,12 +42,22 @@ void ImGuiService::begin_frame()
 
 void ImGuiService::end_frame()
 {
+	
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+	// Update and Render additional Platform Windows
+	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+	{
+		ImGui::UpdatePlatformWindows();
+		ImGui::RenderPlatformWindowsDefault();
+		Engine::get_engine()->get_primary_window()->set_opengl_context();
+	}
+
 	Engine::get_engine()->unblock_inputs();
 }
 
-void ImGuiService::shutdown()
+void ImGuiService::shutdown()  
 {
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();

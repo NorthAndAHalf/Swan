@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Events/EventListener.h"
+#include "imgui/imgui.h"
 
 class ImGuiService : public EventListener
 {

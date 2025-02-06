@@ -13,6 +13,8 @@ public:
 
 	void init_imgui();
 
+	void set_opengl_context();
+
 	void set_title(const char* newTitle) { title = newTitle; }
 	const char* get_title() { return title; }
 
