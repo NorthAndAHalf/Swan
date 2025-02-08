@@ -2,6 +2,7 @@
 #include <mutex>
 #include "events/EventDispatcher.h"
 #include "Window.h"
+#include "Core.h"
 
 class Engine
 {
@@ -13,7 +14,11 @@ public:
 	void init();
 
 	void set_event_dispatcher(EventDispatcher* dispatcher);
-	EventDispatcher& get_event_dispatcher() { return *eventDispatcher; }
+	EventDispatcher& get_event_dispatcher() 
+	{ 
+		ENGINE_ASSERT(eventDispatcher, "Engine event dispatcher is null");
+		return *eventDispatcher; 
+	}
 
 	void set_primary_window(Window* w) { primaryWindow = w; }
 	Window* get_primary_window() { return primaryWindow; }
