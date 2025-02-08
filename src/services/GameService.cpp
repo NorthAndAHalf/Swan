@@ -1,6 +1,6 @@
 #include "GameService.h"
 
-#include "Engine.h"
+#include "Engine/Engine.h"
 #include "spdlog/spdlog.h"
 
 GameService::GameService()
@@ -13,10 +13,10 @@ void GameService::init()
 
 void GameService::update()
 {
-	if (Engine::get_engine()->get_key(65))
+	if (Engine::get_engine()->get_input_manager()->get_key(65))
 	{
-		double xpos = Engine::get_engine()->get_cursorX();
-		double ypos = Engine::get_engine()->get_cursorY();
+		double xpos = Engine::get_engine()->get_input_manager()->get_cursorX();
+		double ypos = Engine::get_engine()->get_input_manager()->get_cursorY();
 		spdlog::info("Mouse Position: X = {0}, Y = {1}", xpos, ypos);
 	}
 }

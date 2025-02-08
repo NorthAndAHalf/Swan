@@ -3,7 +3,7 @@
 #include "spdlog/spdlog.h"
 #include <stdexcept>
 #include "events/Event.h"
-#include "Engine.h"
+#include "Engine/Engine.h"
 
 #include "imgui/imgui.h"
 #include "imgui/backends/imgui_impl_glfw.h"
@@ -60,30 +60,30 @@ void Window::set_event_callbacks()
 			{
 			case GLFW_PRESS:
 			{
-				Engine::get_engine()->get_event_dispatcher().dispatch_key_press(KeyPressEvent(key, scancode, mods));
+				Engine::get_engine()->get_event_dispatcher()->dispatch_key_press(KeyPressEvent(key, scancode, mods));
 				break;
 			}
 			case GLFW_RELEASE:
-				Engine::get_engine()->get_event_dispatcher().dispatch_key_release(KeyReleaseEvent(key, scancode, mods));
+				Engine::get_engine()->get_event_dispatcher()->dispatch_key_release(KeyReleaseEvent(key, scancode, mods));
 				break;
 			}
 		});
 
 	glfwSetCursorPosCallback(glfwWindow, [](GLFWwindow* window, double xpos, double ypos)
 		{
-			Engine::get_engine()->get_event_dispatcher().dispatch_mouse_move(MouseMoveEvent(xpos, ypos));
+			Engine::get_engine()->get_event_dispatcher()->dispatch_mouse_move(MouseMoveEvent(xpos, ypos));
 		});
 
 	glfwSetMouseButtonCallback(glfwWindow, [](GLFWwindow* window, int button, int action, int mods)
 		{
 			if (action == GLFW_PRESS)
 			{
-				Engine::get_engine()->get_event_dispatcher().dispatch_mouse_press(MousePressEvent(button, mods));
+				Engine::get_engine()->get_event_dispatcher()->dispatch_mouse_press(MousePressEvent(button, mods));
 				return;
 			}
 			if (action == GLFW_RELEASE)
 			{
-				Engine::get_engine()->get_event_dispatcher().dispatch_mouse_release(MouseReleaseEvent(button, mods));
+				Engine::get_engine()->get_event_dispatcher()->dispatch_mouse_release(MouseReleaseEvent(button, mods));
 				return;
 			}
 		});

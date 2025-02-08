@@ -1,7 +1,7 @@
 #include "spdlog/spdlog.h"
-#include "Engine.h"
+#include "Engine/Engine.h"
 #include "events/EventListener.h"
-#include "window.h"
+#include "Engine/Window.h"
 #include "services/GameService.h"
 #include "services/ImGuiService.h"
 
@@ -44,8 +44,8 @@ int main()
 	ImGuiService imguiService = ImGuiService();
 	imguiService.init();
 	GameService gameService = GameService();
-	Engine::get_engine()->get_event_dispatcher().subscribe_overlay(&imguiService);
-	Engine::get_engine()->get_event_dispatcher().subscribe(&gameService);
+	Engine::get_engine()->get_event_dispatcher()->subscribe_overlay(&imguiService);
+	Engine::get_engine()->get_event_dispatcher()->subscribe(&gameService);
 
 	while (!Engine::get_engine()->get_primary_window()->window_should_close())
 	{

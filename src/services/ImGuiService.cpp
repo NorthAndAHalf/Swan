@@ -4,7 +4,7 @@
 #include "imgui/backends/imgui_impl_glfw.h"
 #include "imgui/backends/imgui_impl_opengl3.h"
 
-#include "Engine.h"
+#include "Engine/Engine.h"
 
 ImGuiService::ImGuiService()
 {
@@ -36,7 +36,7 @@ void ImGuiService::begin_frame()
 
 	if (ImGui::IsWindowFocused(ImGuiFocusedFlags_AnyWindow))
 	{
-		Engine::get_engine()->block_inputs();
+		Engine::get_engine()->get_input_manager()->block_inputs();
 	}
 }
 
@@ -54,7 +54,7 @@ void ImGuiService::end_frame()
 		Engine::get_engine()->get_primary_window()->set_opengl_context();
 	}
 
-	Engine::get_engine()->unblock_inputs();
+	Engine::get_engine()->get_input_manager()->unblock_inputs();
 }
 
 void ImGuiService::shutdown()  
