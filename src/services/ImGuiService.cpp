@@ -22,7 +22,7 @@ void ImGuiService::init()
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // IF using Docking Branch
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
-	Engine::get_engine()->get_primary_window()->init_imgui();
+	Engine::get_engine()->get_primary_window().init_imgui();
 }
 
 void ImGuiService::on_frame_start()
@@ -36,7 +36,7 @@ void ImGuiService::on_frame_start()
 
 	if (ImGui::IsWindowFocused(ImGuiFocusedFlags_AnyWindow))
 	{
-		Engine::get_engine()->get_input_manager()->block_inputs();
+		Engine::get_engine()->get_input_manager().block_inputs();
 	}
 }
 
@@ -51,10 +51,10 @@ void ImGuiService::on_frame_end()
 	{
 		ImGui::UpdatePlatformWindows();
 		ImGui::RenderPlatformWindowsDefault();
-		Engine::get_engine()->get_primary_window()->set_opengl_context();
+		Engine::get_engine()->get_primary_window().set_opengl_context();
 	}
 
-	Engine::get_engine()->get_input_manager()->unblock_inputs();
+	Engine::get_engine()->get_input_manager().unblock_inputs();
 }
 
 void ImGuiService::shutdown()  

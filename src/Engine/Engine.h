@@ -5,6 +5,7 @@
 #include "Core.h"
 
 #include "Engine/InputManager.h"
+#include "Engine/TimeManager.h"
 
 class Engine
 {
@@ -18,13 +19,13 @@ public:
 
 	void start_main_loop();
 
-	void set_event_dispatcher(EventDispatcher* dispatcher);
-	EventDispatcher* get_event_dispatcher();
+	EventDispatcher& get_event_dispatcher();
 
 	void set_primary_window(Window* w) { primaryWindow = w; }
-	Window* get_primary_window();
+	Window& get_primary_window();
 
-	InputManager* get_input_manager();
+	InputManager& get_input_manager();
+	TimeManager& get_time_manager();
 
 private:
 	Engine();
@@ -36,4 +37,5 @@ private:
 	static EventDispatcher* eventDispatcher;
 
 	static InputManager* inputManager;
+	static TimeManager* timeManager;
 };

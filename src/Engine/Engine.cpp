@@ -8,6 +8,7 @@ std::mutex Engine::mtx;
 EventDispatcher* Engine::eventDispatcher = nullptr;
 Window* Engine::primaryWindow = nullptr;
 InputManager* Engine::inputManager = nullptr;
+TimeManager* Engine::timeManager = nullptr;
 
 Engine::Engine()
 {
@@ -41,6 +42,7 @@ void Engine::init()
     primaryWindow->init();
 
     inputManager = new InputManager(primaryWindow);
+    timeManager = new TimeManager();
 
     spdlog::info("Engine initialised successfully");
 }
@@ -64,25 +66,26 @@ void Engine::start_main_loop()
     }
 }
 
-void Engine::set_event_dispatcher(EventDispatcher* dispatcher)
-{
-    eventDispatcher = dispatcher;
-}
-
-EventDispatcher* Engine::get_event_dispatcher()
+EventDispatcher& Engine::get_event_dispatcher()
 {
     ENGINE_ASSERT(eventDispatcher, "Event dispatcher is null");
-    return eventDispatcher;
+    return *eventDispatcher;
 }
 
-Window* Engine::get_primary_window()
+Window& Engine::get_primary_window()
 {
     ENGINE_ASSERT(primaryWindow, "Primary window is null");
-    return primaryWindow;
+    return *primaryWindow;
 }
 
-InputManager* Engine::get_input_manager()
+InputManager& Engine::get_input_manager()
 {
     ENGINE_ASSERT(inputManager, "Input manager is null");
-    return inputManager;
+    return *inputManager;
+}
+
+TimeManager& Engine::get_time_manager()
+{
+    ENGINE_ASSERT(timeManager, "Time manager is null");
+    return *timeManager;
 }

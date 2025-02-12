@@ -29,8 +29,8 @@ int main()
 	ImGuiService imguiService = ImGuiService();
 	imguiService.init();
 	GameService gameService = GameService();
-	Engine::get_engine()->get_event_dispatcher()->subscribe_overlay(&imguiService);
-	Engine::get_engine()->get_event_dispatcher()->subscribe(&gameService);
+	Engine::get_engine()->get_event_dispatcher().subscribe_overlay(&imguiService);
+	Engine::get_engine()->get_event_dispatcher().subscribe(&gameService);
 
 	try
 	{
