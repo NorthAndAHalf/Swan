@@ -8,7 +8,8 @@ public:
 	GameService();
 
 	void init();
-	void update();
+
+	virtual void on_update() override;
 
 	virtual void on_key_press_event(KeyPressEvent& e) override;
 	virtual void on_key_release_event(KeyReleaseEvent& e) override;

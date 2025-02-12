@@ -25,7 +25,7 @@ void ImGuiService::init()
 	Engine::get_engine()->get_primary_window()->init_imgui();
 }
 
-void ImGuiService::begin_frame()
+void ImGuiService::on_frame_start()
 {
 	// (Your code process and dispatch Win32 messages)
 	// Start the Dear ImGui frame
@@ -40,7 +40,7 @@ void ImGuiService::begin_frame()
 	}
 }
 
-void ImGuiService::end_frame()
+void ImGuiService::on_frame_end()
 {
 	
 	ImGui::Render();

@@ -15,4 +15,9 @@ private:
 	virtual void on_mouse_move_event(MouseMoveEvent& e) {}
 	virtual void on_mouse_press_event(MousePressEvent& e) {}
 	virtual void on_mouse_release_event(MouseReleaseEvent& e) {}
+
+	virtual void on_frame_start() {}
+	virtual void on_frame_end() {}
+
+	virtual void on_update() {}
 };

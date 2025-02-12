@@ -29,17 +29,16 @@ void Engine::init()
 {
     spdlog::info("Initialising Engine");
 
-    if (!eventDispatcher)
+    spdlog::info("Initialising GLFW");
+    if (!glfwInit())
     {
-        throw std::runtime_error("Engine event dispatcher not set");
+        throw std::runtime_error("Failed to initialise GLFW");
     }
 
-    if (!primaryWindow)
-    {
-        spdlog::trace("No primary window set for Engine, using default");
-        primaryWindow = new Window("Snowdrift", 1080, 1920, false);
-        primaryWindow->init();
-    }
+    eventDispatcher = new EventDispatcher();
+
+    primaryWindow = new Window("Snowdrift", 1080, 1920, false);
+    primaryWindow->init();
 
     inputManager = new InputManager(primaryWindow);
 
@@ -48,7 +47,21 @@ void Engine::init()
 
 void Engine::shutdown()
 {
+    spdlog::info("Shutting down engine");
     delete inputManager;
+}
+
+void Engine::start_main_loop()
+{
+    while (!primaryWindow->window_should_close())
+    {
+        eventDispatcher->dispatch_frame_start();
+
+        eventDispatcher->dispatch_update();
+        primaryWindow->update();
+
+        eventDispatcher->dispatch_frame_end();
+    }
 }
 
 void Engine::set_event_dispatcher(EventDispatcher* dispatcher)

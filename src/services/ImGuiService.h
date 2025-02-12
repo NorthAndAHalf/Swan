@@ -9,9 +9,11 @@ public:
 	ImGuiService();
 
 	void init();
-	void begin_frame();
-	void end_frame();
+	
 	void shutdown();
 
-	virtual void on_event(Event& e);
+	virtual void on_frame_start() override;
+	virtual void on_frame_end() override;
+
+	virtual void on_event(Event& e) override;
 };

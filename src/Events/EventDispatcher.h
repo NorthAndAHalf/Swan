@@ -19,6 +19,11 @@ public:
 	void dispatch_mouse_press(MousePressEvent e);
 	void dispatch_mouse_release(MouseReleaseEvent e);
 
+	void dispatch_frame_start();
+	void dispatch_frame_end();
+
+	void dispatch_update();
+
 private:
 	std::vector<EventListener*> listeners;
 	std::vector<EventListener*> overlay_listeners;

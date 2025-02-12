@@ -11,21 +11,6 @@
 #define SPD_DEBUG_LEVEL(x);
 #endif
 
-void setup()
-{
-	EventDispatcher* eventDispatcher = new EventDispatcher();
-	Engine::get_engine()->set_event_dispatcher(eventDispatcher);
-
-	if (!glfwInit())
-	{
-		throw std::runtime_error("Failed to initialise GLFW");
-		return;
-	}
-	spdlog::info("Initialised GLFW");
-
-	Engine::get_engine()->init();
-}
-
 int main()
 {
 	// Setting up spdlog level, spdlog::trace() will only print when in debug configuration, other log functions will work in all configurations
@@ -33,7 +18,7 @@ int main()
 	
 	try
 	{
-		setup();
+		Engine::get_engine()->init();
 	}
 	catch (const std::exception& e)
 	{
@@ -47,11 +32,15 @@ int main()
 	Engine::get_engine()->get_event_dispatcher()->subscribe_overlay(&imguiService);
 	Engine::get_engine()->get_event_dispatcher()->subscribe(&gameService);
 
-	while (!Engine::get_engine()->get_primary_window()->window_should_close())
+	try
 	{
-		imguiService.begin_frame();
-		Engine::get_engine()->get_primary_window()->update();
-		gameService.update();
-		imguiService.end_frame();
+		Engine::get_engine()->start_main_loop();
 	}
+	catch (const std::exception& e)
+	{
+		spdlog::critical(e.what());
+		return -1;
+	}
+
+	Engine::get_engine()->shutdown();
 }

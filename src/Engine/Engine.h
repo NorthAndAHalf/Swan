@@ -16,6 +16,8 @@ public:
 	void init();
 	void shutdown();
 
+	void start_main_loop();
+
 	void set_event_dispatcher(EventDispatcher* dispatcher);
 	EventDispatcher* get_event_dispatcher();
 

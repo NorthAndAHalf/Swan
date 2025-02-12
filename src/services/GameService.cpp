@@ -11,7 +11,7 @@ void GameService::init()
 {
 }
 
-void GameService::update()
+void GameService::on_update()
 {
 	if (Engine::get_engine()->get_input_manager()->get_key(65))
 	{

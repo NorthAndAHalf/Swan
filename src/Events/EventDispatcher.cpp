@@ -117,3 +117,42 @@ void EventDispatcher::dispatch_mouse_release(MouseReleaseEvent e)
 		l->on_mouse_release_event(e);
 	}
 }
+
+void EventDispatcher::dispatch_frame_start()
+{
+	for (EventListener* l : overlay_listeners)
+	{
+		l->on_frame_start();
+	}
+
+	for (EventListener* l : listeners)
+	{
+		l->on_frame_start();
+	}
+}
+
+void EventDispatcher::dispatch_frame_end()
+{
+	for (EventListener* l : overlay_listeners)
+	{
+		l->on_frame_end();
+	}
+
+	for (EventListener* l : listeners)
+	{
+		l->on_frame_end();
+	}
+}
+
+void EventDispatcher::dispatch_update()
+{
+	for (EventListener* l : overlay_listeners)
+	{
+		l->on_update();
+	}
+
+	for (EventListener* l : listeners)
+	{
+		l->on_update();
+	}
+}
