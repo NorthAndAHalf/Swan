@@ -7,6 +7,8 @@
 #include "Engine/InputManager.h"
 #include "Engine/TimeManager.h"
 
+#include "Renderer/Renderer.h"
+
 class Engine
 {
 public:
@@ -38,4 +40,6 @@ private:
 
 	static InputManager* inputManager;
 	static TimeManager* timeManager;
+
+	static Renderer* renderer;
 };
