@@ -1,14 +1,14 @@
 local ROOT = ""
 
-workspace "Snowdrift"
+workspace "Snowfall"
     configurations { "Debug", "Release" }
 
-project "Snowdrift"
+project "Snowfall"
     kind "ConsoleApp"
     language "C++"
     cppdialect "C++17"
     targetdir "bin/%{cfg.buildcfg}"
-    targetname "Snowdrift"
+    targetname "Snowfall"
     architecture "x64"
     local SourceDir = ROOT .. "src/";
 

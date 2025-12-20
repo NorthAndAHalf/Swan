@@ -40,7 +40,7 @@ void Engine::init()
 
     eventDispatcher = new EventDispatcher();
 
-    primaryWindow = new Window("Snowdrift", 1080, 1920, false);
+    primaryWindow = new Window("Snowfall", 1080, 1920, false);
     primaryWindow->init();
 
     inputManager = new InputManager(primaryWindow);
