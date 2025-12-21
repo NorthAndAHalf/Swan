@@ -1,8 +1,8 @@
 #pragma once
 
-#ifdef SD_DEBUG
+#ifdef SF_DEBUG
 #include <cassert>
-#define ENGINE_ASSERT(x, msg) if (!(x)) { assert(false && msg); }
+#define SF_ASSERT(x, msg) if (!(x)) { assert(false && msg); }
 #else
-#define ENGINE_ASSERT(x, msg)
+#define SF_ASSERT(x, msg)
 #endif

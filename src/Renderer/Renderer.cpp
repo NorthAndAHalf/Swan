@@ -17,7 +17,7 @@ void Renderer::set_pipeline(std::shared_ptr<RenderPipeline> _pipeline)
 
 void Renderer::update()
 {
-    ENGINE_ASSERT(pipeline, "Render pipeline is null");
+    SF_ASSERT(pipeline, "Render pipeline is null");
 
     pipeline->render();
 }

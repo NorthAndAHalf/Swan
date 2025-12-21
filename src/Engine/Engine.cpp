@@ -74,24 +74,24 @@ void Engine::start_main_loop()
 
 EventDispatcher& Engine::get_event_dispatcher()
 {
-    ENGINE_ASSERT(eventDispatcher, "Event dispatcher is null");
+    SF_ASSERT(eventDispatcher, "Event dispatcher is null");
     return *eventDispatcher;
 }
 
 Window& Engine::get_primary_window()
 {
-    ENGINE_ASSERT(primaryWindow, "Primary window is null");
+    SF_ASSERT(primaryWindow, "Primary window is null");
     return *primaryWindow;
 }
 
 InputManager& Engine::get_input_manager()
 {
-    ENGINE_ASSERT(inputManager, "Input manager is null");
+    SF_ASSERT(inputManager, "Input manager is null");
     return *inputManager;
 }
 
 TimeManager& Engine::get_time_manager()
 {
-    ENGINE_ASSERT(timeManager, "Time manager is null");
+    SF_ASSERT(timeManager, "Time manager is null");
     return *timeManager;
 }

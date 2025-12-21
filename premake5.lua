@@ -6,7 +6,7 @@ workspace "Snowfall"
 project "Snowfall"
     kind "ConsoleApp"
     language "C++"
-    cppdialect "C++17"
+    cppdialect "C++23"
     targetdir "bin/%{cfg.buildcfg}"
     targetname "Snowfall"
     architecture "x64"
@@ -56,7 +56,7 @@ project "Snowfall"
     { 
         "vendor/glfw/lib-vc2022/glfw3.lib",
         "opengl32.lib",
-        "vendor/assimp/lib/Debug/assimp-vc143-mtd.lib"
+        "vendor/assimp/lib/Debug/assimp-vc145-mtd.lib"
     }
 
     postbuildcommands {
@@ -66,9 +66,9 @@ project "Snowfall"
     
 
     filter "configurations:Debug"
-        defines { "SD_DEBUG" }
+        defines { "SF_DEBUG" }
         symbols "On"
 
     filter "configurations:Release"
-        defines { "SD_NDEBUG" }
+        defines { "SF_NDEBUG" }
         optimize "On"
