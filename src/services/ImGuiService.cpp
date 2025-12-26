@@ -28,6 +28,10 @@ void ImGuiService::init()
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // IF using Docking Branch
+
+	// --- NOTE ---
+	// Viewports currently will not work, because ImGui is decoupled from GLFW, and viewports requires new Windows to be created
+	// I think the best way to address this in the future would be to create a Window manager that ImGui can interface with
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
 	ImGui_ImplOpenGL3_Init();
