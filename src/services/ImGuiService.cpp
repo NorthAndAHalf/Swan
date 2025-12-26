@@ -1,7 +1,6 @@
 #include "ImGuiService.h"
 
 #include "imgui/imgui.h"
-#include "imgui/backends/imgui_impl_glfw.h"
 #include "imgui/backends/imgui_impl_opengl3.h"
 
 #include "Engine/Engine.h"
@@ -17,22 +16,28 @@ void ImGuiService::init()
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
+
+	io.DisplaySize = ImVec2(
+		(float) Engine::get_engine()->get_primary_window().get_width(),
+		(float) Engine::get_engine()->get_primary_window().get_height());
+
+	float dt = Engine::get_engine()->get_time_manager().get_delta_time();
+
+	io.DeltaTime = (dt > 0.0f) ? dt : (1.0f / 60.0f); // Provide a default delta time (1 frame at 60fps) if dt is 0 (as it would be on first frame)
+
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // IF using Docking Branch
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
-	Engine::get_engine()->get_primary_window().init_imgui();
+	ImGui_ImplOpenGL3_Init();
 }
 
 void ImGuiService::on_frame_start()
 {
-	// (Your code process and dispatch Win32 messages)
-	// Start the Dear ImGui frame
 	ImGui_ImplOpenGL3_NewFrame();
-	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
-	ImGui::ShowDemoWindow(); // Show demo window! :)3
+	ImGui::ShowDemoWindow();
 
 	if (ImGui::IsWindowFocused(ImGuiFocusedFlags_AnyWindow))
 	{
@@ -60,7 +65,6 @@ void ImGuiService::on_frame_end()
 void ImGuiService::shutdown()  
 {
 	ImGui_ImplOpenGL3_Shutdown();
-	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
 }
 

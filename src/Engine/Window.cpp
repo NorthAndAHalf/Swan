@@ -5,10 +5,6 @@
 #include "events/Event.h"
 #include "Engine/Engine.h"
 
-#include "imgui/imgui.h"
-#include "imgui/backends/imgui_impl_glfw.h"
-#include "imgui/backends/imgui_impl_opengl3.h"
-
 Window::Window(const char* startTitle, uint32_t startHeight, uint32_t startWidth, bool startFullscreen)
 	: title(startTitle),
 	  height(startHeight),
@@ -94,12 +90,6 @@ void Window::update()
 	glfwSwapBuffers(glfwWindow);
 	glfwPollEvents();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-}
-
-void Window::init_imgui()
-{
-	ImGui_ImplGlfw_InitForOpenGL(glfwWindow, true);
-	ImGui_ImplOpenGL3_Init();
 }
 
 void Window::set_opengl_context()
