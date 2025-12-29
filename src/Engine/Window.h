@@ -1,7 +1,7 @@
 #pragma once
 #include <stdint.h>
 #include "GLFW/glfw3.h"
-#include "Events/EventDispatcher.h"
+#include "Events/eventsystem.h"
 
 class Window
 {
@@ -10,8 +10,6 @@ public:
 
 	void init();
 	void update();
-
-	void init_imgui();
 
 	void set_opengl_context();
 

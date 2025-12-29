@@ -56,32 +56,42 @@ void Window::set_event_callbacks()
 			{
 			case GLFW_PRESS:
 			{
-				Engine::get_engine()->get_event_dispatcher().dispatch_key_press(KeyPressEvent(key, scancode, mods));
+				Engine::get_engine()->get_event_system().queue_event<KeyPressEvent>(key, scancode, mods);
 				break;
 			}
 			case GLFW_RELEASE:
-				Engine::get_engine()->get_event_dispatcher().dispatch_key_release(KeyReleaseEvent(key, scancode, mods));
+				Engine::get_engine()->get_event_system().queue_event<KeyReleaseEvent>(key, scancode, mods);
 				break;
 			}
 		});
 
+	glfwSetCharCallback(glfwWindow, [](GLFWwindow* window, unsigned int codePoint)
+		{
+			Engine::get_engine()->get_event_system().queue_event<CharEvent>(codePoint);
+		});
+
 	glfwSetCursorPosCallback(glfwWindow, [](GLFWwindow* window, double xpos, double ypos)
 		{
-			Engine::get_engine()->get_event_dispatcher().dispatch_mouse_move(MouseMoveEvent(xpos, ypos));
+			Engine::get_engine()->get_event_system().queue_event<MouseMoveEvent>(xpos, ypos);
 		});
 
 	glfwSetMouseButtonCallback(glfwWindow, [](GLFWwindow* window, int button, int action, int mods)
 		{
 			if (action == GLFW_PRESS)
 			{
-				Engine::get_engine()->get_event_dispatcher().dispatch_mouse_press(MousePressEvent(button, mods));
+				Engine::get_engine()->get_event_system().queue_event<MousePressEvent>(button, mods);
 				return;
 			}
 			if (action == GLFW_RELEASE)
 			{
-				Engine::get_engine()->get_event_dispatcher().dispatch_mouse_release(MouseReleaseEvent(button, mods));
+				Engine::get_engine()->get_event_system().queue_event<MouseReleaseEvent>(button, mods);
 				return;
 			}
+		});
+
+	glfwSetScrollCallback(glfwWindow, [](GLFWwindow* window, double x_offset, double y_offset)
+		{
+			Engine::get_engine()->get_event_system().queue_event<MouseWheelEvent>(x_offset, y_offset);
 		});
 }
 

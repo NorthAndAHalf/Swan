@@ -9,11 +9,14 @@ GameService::GameService()
 
 void GameService::init()
 {
+	Engine::get_engine()->get_event_system().subscribe_global<UpdateEvent>([this](UpdateEvent& e) { this->on_update(e); });
+	Engine::get_engine()->get_event_system().subscribe_global<KeyPressEvent>([this](KeyPressEvent& e) { this->on_key_press_event(e); });
+	Engine::get_engine()->get_event_system().subscribe_global<MousePressEvent>([this](MousePressEvent& e) { this->on_mouse_press_event(e); });
 }
 
-void GameService::on_update()
+void GameService::on_update(UpdateEvent& e)
 {
-	if (Engine::get_engine()->get_input_manager().get_key(65))
+	if (Engine::get_engine()->get_input_manager().get_key(SF_KEY_A))
 	{
 		double xpos = Engine::get_engine()->get_input_manager().get_cursorX();
 		double ypos = Engine::get_engine()->get_input_manager().get_cursorY();
@@ -23,24 +26,14 @@ void GameService::on_update()
 
 void GameService::on_key_press_event(KeyPressEvent& e)
 {
-	if (e.keycode == 32)
+	if (e.keycode == SF_KEY_SPACE)
 	{
 		spdlog::info("Jump");
 	}
 }
 
-void GameService::on_key_release_event(KeyReleaseEvent& e)
-{
-}
-
-void GameService::on_mouse_move_event(MouseMoveEvent& e)
-{
-}
-
 void GameService::on_mouse_press_event(MousePressEvent& e)
 {
+	spdlog::info(e.button);
 }
 
-void GameService::on_mouse_release_event(MouseReleaseEvent& e)
-{
-}

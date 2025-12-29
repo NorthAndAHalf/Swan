@@ -1,7 +1,7 @@
 #include "InputManager.h"
 
 InputManager::InputManager(Window* w)
-    : mWindow(w), isBlockingInputs(false)
+    : mWindow(w)
 {
 }
 
@@ -12,13 +12,11 @@ void InputManager::set_window(Window* w)
 
 bool InputManager::get_key(int keycode)
 {
-    if (isBlockingInputs) return false;
     return mWindow->get_key(keycode);
 }
 
 bool InputManager::get_mouse_button(int button)
 {
-    if (isBlockingInputs) return false;
     return mWindow->get_mouse_button(button);
 }
 
@@ -41,14 +39,4 @@ double InputManager::get_cursorY()
     double xpos, ypos;
     mWindow->get_cursor(&xpos, &ypos);
     return ypos;
-}
-
-void InputManager::block_inputs()
-{
-    isBlockingInputs = true;
-}
-
-void InputManager::unblock_inputs()
-{
-    isBlockingInputs = false;
 }
