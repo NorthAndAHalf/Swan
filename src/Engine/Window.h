@@ -61,3 +61,15 @@ private:
 
 	void set_event_callbacks();
 };
+
+namespace GLFWHelpers {
+	// Key and Button Mappings
+	int glfw_key_to_sf_key(int glfw_key);
+	int glfw_mouse_button_to_sf_mouse_button(int glfw_button);
+	int glfw_mods_to_sf_mods(int glfw_mods);
+	int glfw_gamepad_button_to_sf_gamepad_button(int glfw_button);
+
+	// Joystick and Axis Mappings
+	int glfw_joystick_to_sf_joystick(int glfw_joystick);
+	int glfw_gamepad_axis_to_sf_gamepad_axis(int glfw_axis);
+}
