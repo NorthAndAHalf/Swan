@@ -32,6 +32,9 @@ public:
 		return (isFullscreen) ? fullscreenWidth : width; 
 	}
 
+	void get_framebuffer_size(int* width, int* height);
+	void get_content_scale(float* x, float* y);
+
 	void set_fullscreen_height(uint32_t height) { fullscreenHeight = height; }
 	void set_fullscreen_width(uint32_t width) { fullscreenWidth = width;  }
 

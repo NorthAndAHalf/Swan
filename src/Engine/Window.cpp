@@ -50,6 +50,15 @@ void Window::init()
 
 void Window::set_event_callbacks()
 {
+    glfwSetWindowSizeCallback(glfwWindow, [](GLFWwindow* window, int width, int height)
+        {
+            int frameBufferWidth;
+            int frameBufferHeight;
+            glfwGetFramebufferSize(window, &frameBufferWidth, &frameBufferHeight);
+
+            Engine::get_engine()->get_event_system().queue_event<WindowResizeEvent>(width, height, frameBufferWidth, frameBufferHeight);
+        });
+
 	glfwSetKeyCallback(glfwWindow, [](GLFWwindow* window, int key, int scancode, int action, int mods)
 		{
             key = GLFWHelpers::glfw_key_to_sf_key(key);
@@ -158,6 +167,16 @@ bool Window::get_mouse_button(int button)
 void Window::get_cursor(double* xpos, double* ypos)
 {
 	glfwGetCursorPos(glfwWindow, xpos, ypos);
+}
+
+void Window::get_framebuffer_size(int* width, int* height)
+{
+    glfwGetFramebufferSize(glfwWindow, width, height);
+}
+
+void Window::get_content_scale(float* x, float* y)
+{
+    glfwGetWindowContentScale(glfwWindow, x, y);
 }
 
 namespace GLFWHelpers {

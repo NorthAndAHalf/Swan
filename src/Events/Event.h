@@ -32,6 +32,18 @@ public:
 	FrameEndEvent() {}
 };
 
+class WindowResizeEvent : public Event
+{
+public:
+	WindowResizeEvent(int _width, int _height, int _frameBufferWidth, int _frameBufferHeight)
+		:width(_width), height(_height), frameBufferWidth(_frameBufferWidth), frameBufferHeight(_frameBufferHeight) {}
+
+	const int width;
+	const int height;
+	const int frameBufferWidth;
+	const int frameBufferHeight;
+};
+
 class KeyPressEvent : public Event
 {
 public:

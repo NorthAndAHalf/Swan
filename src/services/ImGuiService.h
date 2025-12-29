@@ -16,7 +16,7 @@ public:
 private:
 	void on_frame_start(FrameStartEvent& e);
 	void on_frame_end(FrameEndEvent& e);
-	void on_event_common(Event& e);
+	void update_key_modifiers(int mods);
     
     ImGuiIO* m_Io;
 };

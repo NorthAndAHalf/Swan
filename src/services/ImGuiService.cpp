@@ -4,13 +4,13 @@
 #include "imgui/backends/imgui_impl_opengl3.h"
 
 #include "Engine/Engine.h"
+#include "spdlog/spdlog.h"
 
 ImGuiService::ImGuiService()
 {
 	
 }
 
-// Still need to handle inputs to imgui, as at the moment they go to both imgui and game service
 void ImGuiService::init()
 {
 	IMGUI_CHECKVERSION();
@@ -37,73 +37,73 @@ void ImGuiService::init()
 	Engine::get_engine()->get_event_system().subscribe_global<FrameEndEvent>([this](FrameEndEvent& e) 
 		{ this->on_frame_end(e); });
 
+    Engine::get_engine()->get_event_system().subscribe_global<WindowResizeEvent>([this](WindowResizeEvent& e)
+        {
+            m_Io->DisplaySize = ImVec2((float)e.frameBufferWidth, (float)e.frameBufferHeight);
+        });
+
 	// Events handled by ImGui
 	Engine::get_engine()->get_event_system().subscribe_global<KeyPressEvent>([this](KeyPressEvent& e)
 		{
-			if (!m_Io->WantCaptureKeyboard) return;
-
+            update_key_modifiers(e.mods);
 			ImGuiKey key = ImGuiHelpers::sf_key_to_imgui_key(e.keycode);
 			this->m_Io->AddKeyEvent(key, true);
-			e.handled = true;
+            if (m_Io->WantCaptureKeyboard) e.handled = true;
 		});
 
 	Engine::get_engine()->get_event_system().subscribe_global<KeyReleaseEvent>([this](KeyReleaseEvent& e)
 		{
-			if (!m_Io->WantCaptureKeyboard) return;
-
+            update_key_modifiers(e.mods);
 			ImGuiKey key = ImGuiHelpers::sf_key_to_imgui_key(e.keycode);
 			this->m_Io->AddKeyEvent(key, false);
-			e.handled = true;
+            if (m_Io->WantCaptureKeyboard) e.handled = true;
 		});
 
 	Engine::get_engine()->get_event_system().subscribe_global<CharEvent>([this](CharEvent& e)
 		{
-			if (!m_Io->WantCaptureKeyboard) return;
-
 			this->m_Io->AddInputCharacter(e.codePoint);
-			e.handled = true;
+            if (m_Io->WantCaptureKeyboard) e.handled = true;
 		});
 
 	Engine::get_engine()->get_event_system().subscribe_global<MousePressEvent>([this](MousePressEvent& e)
 		{
-			if (!m_Io->WantCaptureMouse) return;
-
+            update_key_modifiers(e.mods);
 			ImGuiMouseButton button = ImGuiHelpers::sf_mouse_button_to_imgui_mouse_button(e.button);
 			this->m_Io->AddMouseButtonEvent(button, true);
-			e.handled = true;
+            if (m_Io->WantCaptureMouse) e.handled = true;
 		});
 
 	Engine::get_engine()->get_event_system().subscribe_global<MouseReleaseEvent>([this](MouseReleaseEvent& e)
 		{
-			if (!m_Io->WantCaptureMouse) return;
-
-			ImGuiMouseButton button = ImGuiHelpers::sf_mouse_button_to_imgui_mouse_button(e.button);
+            update_key_modifiers(e.mods);
+            ImGuiMouseButton button = ImGuiHelpers::sf_mouse_button_to_imgui_mouse_button(e.button);
 			this->m_Io->AddMouseButtonEvent(button, false);
-			e.handled = true;
+            if (m_Io->WantCaptureMouse) e.handled = true;
 		});
 
 	Engine::get_engine()->get_event_system().subscribe_global<MouseWheelEvent>([this](MouseWheelEvent& e)
 		{
-			if (!m_Io->WantCaptureMouse) return;
-
 			this->m_Io->AddMouseWheelEvent(e.x_offset, e.y_offset);
-			e.handled = true;
+            if (m_Io->WantCaptureMouse) e.handled = true;
 		});
 
 	Engine::get_engine()->get_event_system().subscribe_global<MouseMoveEvent>([this](MouseMoveEvent& e)
 		{
-			if (!m_Io->WantCaptureMouse) return;
+            float xScale;
+            float yScale;
 
+            Engine::get_engine()->get_primary_window().get_content_scale(&xScale, &yScale);
 			this->m_Io->AddMousePosEvent(e.xpos, e.ypos);
-			e.handled = true;
 		});
 }
 
 void ImGuiService::on_frame_start(FrameStartEvent& e)
 {
-	m_Io->DisplaySize = ImVec2(
-		(float)Engine::get_engine()->get_primary_window().get_width(),
-		(float)Engine::get_engine()->get_primary_window().get_height());
+    int frameBufferWidth;
+    int frameBufferHeight;
+    Engine::get_engine()->get_primary_window().get_framebuffer_size(&frameBufferWidth, &frameBufferHeight);
+
+    m_Io->DisplaySize = ImVec2((float) frameBufferWidth, (float) frameBufferHeight);
 
 	float dt = Engine::get_engine()->get_time_manager().get_delta_time();
 
@@ -134,12 +134,12 @@ void ImGuiService::shutdown()
 	ImGui::DestroyContext();
 }
 
-void ImGuiService::on_event_common(Event& e)
+void ImGuiService::update_key_modifiers(int mods)
 {
-	if (ImGui::IsWindowFocused(ImGuiFocusedFlags_AnyWindow))
-	{
-		e.handled = true;
-	}
+    m_Io->AddKeyEvent(ImGuiMod_Shift, (mods & 0x0001) != 0); // GLFW_MOD_SHIFT
+    m_Io->AddKeyEvent(ImGuiMod_Ctrl, (mods & 0x0002) != 0); // GLFW_MOD_CONTROL
+    m_Io->AddKeyEvent(ImGuiMod_Alt, (mods & 0x0004) != 0); // GLFW_MOD_ALT
+    m_Io->AddKeyEvent(ImGuiMod_Super, (mods & 0x0008) != 0); // GLFW_MOD_SUPER
 }
 
 ImGuiKey ImGuiHelpers::sf_key_to_imgui_key(int key)
