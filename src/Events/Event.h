@@ -10,6 +10,8 @@ class Event
 public:
 	virtual ~Event() = default;
 	bool handled = false;
+
+	uint32_t get_type_id() { return typeId; }
 protected:
 	uint32_t typeId = 0; // Used by the event dispatcher to map event types to buckets
 };
