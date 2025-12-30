@@ -43,7 +43,7 @@ void ImGuiService::init()
         });
 
 	// Events handled by ImGui
-	Engine::get_engine()->get_event_system().subscribe_global<KeyPressEvent>([this](KeyPressEvent& e)
+	Engine::get_engine()->get_event_system().subscribe_layer<KeyPressEvent>(Layer::Debug, [this](KeyPressEvent& e)
 		{
             update_key_modifiers(e.mods);
 			ImGuiKey key = ImGuiHelpers::sf_key_to_imgui_key(e.keycode);
@@ -51,7 +51,7 @@ void ImGuiService::init()
             if (m_Io->WantCaptureKeyboard) e.handled = true;
 		});
 
-	Engine::get_engine()->get_event_system().subscribe_global<KeyReleaseEvent>([this](KeyReleaseEvent& e)
+	Engine::get_engine()->get_event_system().subscribe_layer<KeyReleaseEvent>(Layer::Debug, [this](KeyReleaseEvent& e)
 		{
             update_key_modifiers(e.mods);
 			ImGuiKey key = ImGuiHelpers::sf_key_to_imgui_key(e.keycode);
@@ -59,13 +59,13 @@ void ImGuiService::init()
             if (m_Io->WantCaptureKeyboard) e.handled = true;
 		});
 
-	Engine::get_engine()->get_event_system().subscribe_global<CharEvent>([this](CharEvent& e)
+	Engine::get_engine()->get_event_system().subscribe_layer<CharEvent>(Layer::Debug, [this](CharEvent& e)
 		{
 			this->m_Io->AddInputCharacter(e.codePoint);
             if (m_Io->WantCaptureKeyboard) e.handled = true;
 		});
 
-	Engine::get_engine()->get_event_system().subscribe_global<MousePressEvent>([this](MousePressEvent& e)
+	Engine::get_engine()->get_event_system().subscribe_layer<MousePressEvent>(Layer::Debug, [this](MousePressEvent& e)
 		{
             update_key_modifiers(e.mods);
 			ImGuiMouseButton button = ImGuiHelpers::sf_mouse_button_to_imgui_mouse_button(e.button);
@@ -73,7 +73,7 @@ void ImGuiService::init()
             if (m_Io->WantCaptureMouse) e.handled = true;
 		});
 
-	Engine::get_engine()->get_event_system().subscribe_global<MouseReleaseEvent>([this](MouseReleaseEvent& e)
+	Engine::get_engine()->get_event_system().subscribe_layer<MouseReleaseEvent>(Layer::Debug, [this](MouseReleaseEvent& e)
 		{
             update_key_modifiers(e.mods);
             ImGuiMouseButton button = ImGuiHelpers::sf_mouse_button_to_imgui_mouse_button(e.button);
@@ -81,13 +81,13 @@ void ImGuiService::init()
             if (m_Io->WantCaptureMouse) e.handled = true;
 		});
 
-	Engine::get_engine()->get_event_system().subscribe_global<MouseWheelEvent>([this](MouseWheelEvent& e)
+	Engine::get_engine()->get_event_system().subscribe_layer<MouseWheelEvent>(Layer::Debug, [this](MouseWheelEvent& e)
 		{
 			this->m_Io->AddMouseWheelEvent(e.x_offset, e.y_offset);
             if (m_Io->WantCaptureMouse) e.handled = true;
 		});
 
-	Engine::get_engine()->get_event_system().subscribe_global<MouseMoveEvent>([this](MouseMoveEvent& e)
+	Engine::get_engine()->get_event_system().subscribe_layer<MouseMoveEvent>(Layer::Debug, [this](MouseMoveEvent& e)
 		{
             float xScale;
             float yScale;
