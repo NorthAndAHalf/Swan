@@ -9,6 +9,8 @@
 #include <array>
 #include <memory>
 #include <type_traits>
+#include "Memory/LinearBuffer.h"
+#include "spdlog/spdlog.h"
 
 // TODO: Replace std::function with a custom delegate; std::function can make large heap allocations, especially if the lambdas capture 'this'
 using TypeErasedCallback = std::function<void(Event&)>;
@@ -72,10 +74,17 @@ public:
     template<typename T, typename... Args>
     void queue_event(Args&&... args)
     {
-        // TODO: Replace with a linear allocator or circle buffer; make_unique every frame is a bottleneck
-        std::unique_ptr<T> e = std::make_unique<T>(std::forward<Args>(args)...);
+        void* address = m_Buffer.allocate(sizeof(T));
+        if (!address)
+        {
+            spdlog::critical("Event Buffer out of memory!");
+            return;
+        }
+
+        T* e = new (address) T(std::forward<Args>(args)...);
         e->typeId = TypeIdentifier::get_id<T>();
-        m_EventQueue.push(std::move(e));
+
+        m_EventQueue.push_back(e);
     }
 
     template<typename T, typename... Args>
@@ -89,13 +98,14 @@ public:
 
     void dispatch_queued_events()
     {
-        while (!m_EventQueue.empty()) 
+        for (Event* e : m_EventQueue)
         {
-            std::unique_ptr<Event>& e = m_EventQueue.front();
-            notify_subscribers((Event&)*e.get());
-
-            m_EventQueue.pop();
+            notify_subscribers(*e);
+            e->~Event();
         }
+
+        m_EventQueue.clear();
+        m_Buffer.reset();
     }
 
     template<typename T>
@@ -139,9 +149,10 @@ private:
         m_GlobalBucket.propogate_event(e);
     }
 
+    LinearBuffer m_Buffer{ 1024 * 64 }; // 64KB per frame (or per queue dispatch)
+
     HandlerBucket m_GlobalBucket;
     std::array<HandlerBucket, 4> m_LayerBuckets; // Magic Number, the amount of values in the Layer enum
-
-    std::queue<std::unique_ptr<Event>> m_EventQueue;
+    std::vector<Event*> m_EventQueue;
 };
 
