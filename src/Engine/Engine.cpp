@@ -32,6 +32,7 @@ void Engine::init()
 {
     spdlog::info("Initialising Engine");
 
+    // Move to static function in window class
     spdlog::info("Initialising GLFW");
     if (!glfwInit())
     {

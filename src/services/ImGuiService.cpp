@@ -31,70 +31,19 @@ void ImGuiService::init()
 	// Subscribe to events
 	
 	// Events handled in this file
-	Engine::get_engine()->get_event_system().subscribe_global<FrameStartEvent>([this](FrameStartEvent& e) 
-		{ this->on_frame_start(e); });
-
-	Engine::get_engine()->get_event_system().subscribe_global<FrameEndEvent>([this](FrameEndEvent& e) 
-		{ this->on_frame_end(e); });
-
-    Engine::get_engine()->get_event_system().subscribe_global<WindowResizeEvent>([this](WindowResizeEvent& e)
-        {
-            m_Io->DisplaySize = ImVec2((float)e.frameBufferWidth, (float)e.frameBufferHeight);
-        });
+    Engine::get_engine()->get_event_system().subscribe_global<FrameStartEvent, ImGuiService, &ImGuiService::on_frame_start>(this);
+	Engine::get_engine()->get_event_system().subscribe_global<FrameEndEvent, ImGuiService, &ImGuiService::on_frame_end>(this);
+    Engine::get_engine()->get_event_system().subscribe_global<WindowResizeEvent, ImGuiService, &ImGuiService::on_window_resize>(this);
+        
 
 	// Events handled by ImGui
-	Engine::get_engine()->get_event_system().subscribe_layer<KeyPressEvent>(Layer::Debug, [this](KeyPressEvent& e)
-		{
-            update_key_modifiers(e.mods);
-			ImGuiKey key = ImGuiHelpers::sf_key_to_imgui_key(e.keycode);
-			this->m_Io->AddKeyEvent(key, true);
-            if (m_Io->WantCaptureKeyboard) e.handled = true;
-		});
-
-	Engine::get_engine()->get_event_system().subscribe_layer<KeyReleaseEvent>(Layer::Debug, [this](KeyReleaseEvent& e)
-		{
-            update_key_modifiers(e.mods);
-			ImGuiKey key = ImGuiHelpers::sf_key_to_imgui_key(e.keycode);
-			this->m_Io->AddKeyEvent(key, false);
-            if (m_Io->WantCaptureKeyboard) e.handled = true;
-		});
-
-	Engine::get_engine()->get_event_system().subscribe_layer<CharEvent>(Layer::Debug, [this](CharEvent& e)
-		{
-			this->m_Io->AddInputCharacter(e.codePoint);
-            if (m_Io->WantCaptureKeyboard) e.handled = true;
-		});
-
-	Engine::get_engine()->get_event_system().subscribe_layer<MousePressEvent>(Layer::Debug, [this](MousePressEvent& e)
-		{
-            update_key_modifiers(e.mods);
-			ImGuiMouseButton button = ImGuiHelpers::sf_mouse_button_to_imgui_mouse_button(e.button);
-			this->m_Io->AddMouseButtonEvent(button, true);
-            if (m_Io->WantCaptureMouse) e.handled = true;
-		});
-
-	Engine::get_engine()->get_event_system().subscribe_layer<MouseReleaseEvent>(Layer::Debug, [this](MouseReleaseEvent& e)
-		{
-            update_key_modifiers(e.mods);
-            ImGuiMouseButton button = ImGuiHelpers::sf_mouse_button_to_imgui_mouse_button(e.button);
-			this->m_Io->AddMouseButtonEvent(button, false);
-            if (m_Io->WantCaptureMouse) e.handled = true;
-		});
-
-	Engine::get_engine()->get_event_system().subscribe_layer<MouseWheelEvent>(Layer::Debug, [this](MouseWheelEvent& e)
-		{
-			this->m_Io->AddMouseWheelEvent(e.x_offset, e.y_offset);
-            if (m_Io->WantCaptureMouse) e.handled = true;
-		});
-
-	Engine::get_engine()->get_event_system().subscribe_layer<MouseMoveEvent>(Layer::Debug, [this](MouseMoveEvent& e)
-		{
-            float xScale;
-            float yScale;
-
-            Engine::get_engine()->get_primary_window().get_content_scale(&xScale, &yScale);
-			this->m_Io->AddMousePosEvent(e.xpos, e.ypos);
-		});
+    Engine::get_engine()->get_event_system().subscribe<KeyPressEvent, ImGuiService, &ImGuiService::on_key_press>(Layer::DEBUG, this);
+    Engine::get_engine()->get_event_system().subscribe<KeyReleaseEvent, ImGuiService, &ImGuiService::on_key_release>(Layer::DEBUG, this);
+    Engine::get_engine()->get_event_system().subscribe<CharEvent, ImGuiService, &ImGuiService::on_char_input>(Layer::DEBUG, this);
+    Engine::get_engine()->get_event_system().subscribe<MousePressEvent, ImGuiService, &ImGuiService::on_mouse_press>(Layer::DEBUG, this);
+    Engine::get_engine()->get_event_system().subscribe<MouseReleaseEvent, ImGuiService, &ImGuiService::on_mouse_release>(Layer::DEBUG, this);
+    Engine::get_engine()->get_event_system().subscribe<MouseWheelEvent, ImGuiService, &ImGuiService::on_mouse_wheel>(Layer::DEBUG, this);
+    Engine::get_engine()->get_event_system().subscribe<MouseMoveEvent, ImGuiService, &ImGuiService::on_mouse_move>(Layer::DEBUG, this);
 }
 
 void ImGuiService::on_frame_start(FrameStartEvent& e)
@@ -126,6 +75,55 @@ void ImGuiService::on_frame_end(FrameEndEvent& e)
 		ImGui::RenderPlatformWindowsDefault();
 		Engine::get_engine()->get_primary_window().set_opengl_context();
 	}
+}
+
+void ImGuiService::on_window_resize(WindowResizeEvent& e)
+{
+    m_Io->DisplaySize = ImVec2((float)e.frameBufferWidth, (float)e.frameBufferHeight);
+}
+
+void ImGuiService::on_key_press(KeyPressEvent& e) {
+    update_key_modifiers(e.mods);
+    ImGuiKey key = ImGuiHelpers::sf_key_to_imgui_key(e.keycode);
+    m_Io->AddKeyEvent(key, true);
+    if (m_Io->WantCaptureKeyboard) e.handled = true;
+}
+
+void ImGuiService::on_key_release(KeyReleaseEvent& e) {
+    update_key_modifiers(e.mods);
+    ImGuiKey key = ImGuiHelpers::sf_key_to_imgui_key(e.keycode);
+    m_Io->AddKeyEvent(key, false);
+    if (m_Io->WantCaptureKeyboard) e.handled = true;
+}
+
+void ImGuiService::on_char_input(CharEvent& e) {
+    m_Io->AddInputCharacter(e.codePoint);
+    if (m_Io->WantCaptureKeyboard) e.handled = true;
+}
+
+void ImGuiService::on_mouse_press(MousePressEvent& e) {
+    update_key_modifiers(e.mods);
+    ImGuiMouseButton button = ImGuiHelpers::sf_mouse_button_to_imgui_mouse_button(e.button);
+    m_Io->AddMouseButtonEvent(button, true);
+    if (m_Io->WantCaptureMouse) e.handled = true;
+}
+
+void ImGuiService::on_mouse_release(MouseReleaseEvent& e) {
+    update_key_modifiers(e.mods);
+    ImGuiMouseButton button = ImGuiHelpers::sf_mouse_button_to_imgui_mouse_button(e.button);
+    m_Io->AddMouseButtonEvent(button, false);
+    if (m_Io->WantCaptureMouse) e.handled = true;
+}
+
+void ImGuiService::on_mouse_wheel(MouseWheelEvent& e) {
+    m_Io->AddMouseWheelEvent(e.x_offset, e.y_offset);
+    if (m_Io->WantCaptureMouse) e.handled = true;
+}
+
+void ImGuiService::on_mouse_move(MouseMoveEvent& e) {
+    float xScale, yScale;
+    Engine::get_engine()->get_primary_window().get_content_scale(&xScale, &yScale);
+    m_Io->AddMousePosEvent(e.xpos, e.ypos);
 }
 
 void ImGuiService::shutdown()  
