@@ -11,8 +11,6 @@
 #include "Memory/LinearBuffer.h"
 #include "spdlog/spdlog.h"
 
-// TODO: Change queue event function to use the new dual queue system
-
 enum class Layer
 {
     DEBUG = 0,
