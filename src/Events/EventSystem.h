@@ -11,20 +11,13 @@
 #include "Memory/LinearBuffer.h"
 #include "spdlog/spdlog.h"
 
+// TODO: Change queue event function to use the new dual queue system
+
 enum class Layer
 {
     DEBUG = 0,
     UI = 1,
     GAME = 2
-};
-
-struct EventDelegate {
-    using StubFunc = void(*)(void* instance, Event& event);
-
-    void* instance = nullptr;
-    StubFunc stub = nullptr;
-
-    void operator()(Event& e) const { if (stub) stub(instance, e); }
 };
 
 class TypeIdentifier {
@@ -38,23 +31,33 @@ private:
     inline static std::atomic<uint32_t> m_Counter{ 1 };
 };
 
-class DelegateBucket {
-    struct Entry {
-        uint32_t typeId;
-        EventDelegate delegate;
-    };
+struct EventDelegate {
+    using StubFunc = void(*)(void* instance, Event& event);
 
-    DelegateBucket(void* pool)
-        : ptr(pool) {}
+    void* instance = nullptr;
+    StubFunc stub = nullptr;
 
-    void add_delegate()
+    void operator()(Event& e) const { if (stub) stub(instance, e); }
+};
+
+class DelegateBucket 
+{
+public:
+    void add_delegate(uint32_t type, EventDelegate d)
     {
+        m_Pool[type].push_back(d);
+    }
 
+    void propagate_event(Event& e)
+    {
+        for (EventDelegate& delegate : m_Pool[e.get_type_id()])
+        {
+            delegate(e);
+        }
     }
 
 private:
-    void* ptr;
-    uint32_t offset;
+    std::unordered_map<uint32_t, std::vector<EventDelegate>> m_Pool;
 };
 
 class EventSystem {
@@ -63,7 +66,10 @@ public:
 
     template<typename T, typename... Args>
     void queue_event(Args&&... args) {
-        void* address = m_EventQueueBuffer.allocate(sizeof(T));
+        LinearBuffer& buffer = get_dispatch_buffer();
+        auto& queue = get_dispatch_queue();
+
+        void* address = buffer.allocate(sizeof(T));
         if (!address) {
             spdlog::critical("Event Buffer out of memory!");
             return;
@@ -71,7 +77,7 @@ public:
 
         T* e = new (address) T(std::forward<Args>(args)...);
         e->typeId = TypeIdentifier::get_id<T>();
-        m_EventQueue.push_back(e);
+        queue.push_back(e);
     }
 
     template<typename T, typename... Args>
@@ -82,21 +88,21 @@ public:
     }
 
     void dispatch_queued_events() {
-        for (Event* e : m_EventQueue) {
+        std::vector<Event*>& queue = get_dispatch_queue();
+        for (Event* e : queue) {
             notify_subscribers(*e);
             e->~Event();
         }
-        m_EventQueue.clear();
-        m_EventQueueBuffer.reset();
+        swap_queues();
     }
 
 private:
     void notify_subscribers(Event& e) {
         for (DelegateBucket& bucket : m_LayerBuckets) {
-            bucket.propogate_event(e);
-            if (e.handled) return;
+            bucket.propagate_event(e);
+            if (e.handled) break;
         }
-        m_GlobalBucket.propogate_event(e);
+        m_GlobalBucket.propagate_event(e);
     }
 
 public:
@@ -113,7 +119,7 @@ public:
             (static_cast<Obj*>(inst)->*Func)(static_cast<T&>(e));
             };
 
-        m_LayerBuckets[static_cast<size_t>(layer)].add_handler(delegate, id);
+        m_LayerBuckets[static_cast<size_t>(layer)].add_delegate(id, delegate);
     }
 
     template<typename T, typename Obj, void (Obj::* Func)(T&)>
@@ -127,7 +133,7 @@ public:
             (static_cast<Obj*>(inst)->*Func)(static_cast<T&>(e));
             };
 
-        m_GlobalBucket.add_handler(delegate, id);
+        m_GlobalBucket.add_delegate(id, delegate);
     }
 
     template<typename T, void (*func)(T&)>
@@ -138,7 +144,7 @@ public:
         EventDelegate delegate;
         delegate.instance = nullptr; // Passed to the stub, but not used in the lambda defined below
         delegate.stub = [](void*, Event& e) { func(static_cast<T&>(e)); };
-        m_LayerBuckets[static_cast<size_t>(layer)].add_handler(delegate, id);
+        m_LayerBuckets[static_cast<size_t>(layer)].add_delegate(id, delegate);
     }
 
     template<typename T, void (*func)(T&)>
@@ -149,13 +155,30 @@ public:
         EventDelegate delegate;
         delegate.instance = nullptr; // Passed to the stub, but not used in the lambda defined below
         delegate.stub = [](void*, Event& e) { func(static_cast<T&>(e)); };
-        m_GlobalBucket.add_handler(delegate, id);
+        m_GlobalBucket.add_delegate(id, delegate);
     }
 
 private:
-    LinearBuffer m_EventQueueBuffer{ 1024 * 64 }; // 64KB
-    LinearBuffer m_DelegatePool{ 200 * 20 }; // 200 Delegate Entries (4KB)
     DelegateBucket m_GlobalBucket;
     std::array<DelegateBucket, 3> m_LayerBuckets;
-    std::vector<Event*> m_EventQueue;
+
+    LinearBuffer m_EventBuffer1{ 1024 * 64 }; // 64KB
+    LinearBuffer m_EventBuffer2{ 1024 * 64 }; // 64KB
+    std::vector<Event*> m_EventQueue1;
+    std::vector<Event*> m_EventQueue2;
+
+    bool swapQueues;
+    std::vector<Event*>& get_input_queue() { return swapQueues ? m_EventQueue1 : m_EventQueue2; }
+    std::vector<Event*>& get_dispatch_queue() { return !swapQueues ? m_EventQueue1 : m_EventQueue2; }
+    LinearBuffer& get_dispatch_buffer() { return !swapQueues ? m_EventBuffer1 : m_EventBuffer2; }
+
+    void swap_queues()
+    {
+        auto& dispatchQueue = get_dispatch_queue();
+        auto& dispatchBuffer = get_dispatch_buffer();
+
+        dispatchQueue.clear();
+        dispatchBuffer.reset();
+        swapQueues = !swapQueues;
+    }
 };
