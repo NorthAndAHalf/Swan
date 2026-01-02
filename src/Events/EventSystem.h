@@ -70,8 +70,9 @@ public:
     {
         spdlog::info("Allocating event buffers");
 
-        m_EventQueue1 = new Event* [EVENT_QUEUE_COUNT];
-        m_EventQueue2 = new Event* [EVENT_QUEUE_COUNT];
+        // Prevent memory leak if init is called twice
+        if (!m_EventQueue1) m_EventQueue1 = new Event* [EVENT_QUEUE_COUNT];
+        if (!m_EventQueue2) m_EventQueue2 = new Event* [EVENT_QUEUE_COUNT];
 
         m_InputQueue = m_EventQueue1;
         m_DispatchQueue = m_EventQueue2;
@@ -93,7 +94,7 @@ public:
     {
         if (m_InputQueueHead >= EVENT_QUEUE_COUNT)
         {
-            spdlog::error("Event queue overlow");
+            spdlog::error("Event queue overflow");
             return;
         }
 
@@ -204,11 +205,11 @@ private:
     Event** m_EventQueue1;
     Event** m_EventQueue2;
 
-    uint32_t m_InputQueueHead;
+    uint32_t m_InputQueueHead = 0;
     Event** m_InputQueue;
     LinearBuffer* m_InputBuffer;
 
-    uint32_t m_DispatchQueueHead;
+    uint32_t m_DispatchQueueHead = 0;
     Event** m_DispatchQueue;  
     LinearBuffer* m_DispatchBuffer;
 
