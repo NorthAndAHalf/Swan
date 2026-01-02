@@ -18,6 +18,11 @@ Window::Window(const char* startTitle, uint32_t startWidth, uint32_t startHeight
 
 void Window::init()
 {
+    glfwSetErrorCallback([](int error, const char* description) 
+        {
+        spdlog::error("GLFW Error {}: {}", error, description);
+        });
+
 	if (isFullscreen)
 	{
 		glfwWindow = glfwCreateWindow(fullscreenWidth, fullscreenHeight, title, glfwGetPrimaryMonitor(), NULL);
