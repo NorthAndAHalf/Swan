@@ -5,7 +5,7 @@
 #include "events/Event.h"
 #include "Engine/Engine.h"
 
-Window::Window(const char* startTitle, uint32_t startHeight, uint32_t startWidth, bool startFullscreen)
+Window::Window(const char* startTitle, uint32_t startWidth, uint32_t startHeight, bool startFullscreen)
 	: title(startTitle),
 	  height(startHeight),
 	  width(startWidth),

@@ -6,7 +6,7 @@
 class Window
 {
 public:
-	Window(const char* startTitle, uint32_t startHeight, uint32_t startWidth, bool startFullscreen);
+	Window(const char* startTitle, uint32_t startWidth, uint32_t startHeight, bool startFullscreen);
 
 	void init();
 	void destroy();

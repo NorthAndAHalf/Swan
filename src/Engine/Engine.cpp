@@ -33,7 +33,7 @@ void Engine::init()
     eventsystem = std::make_unique<EventSystem>();
     eventsystem->init();
 
-    primaryWindow = std::make_unique<Window>("Snowfall", 1080, 1920, false);
+    primaryWindow = std::make_unique<Window>("Snowfall", 1920, 1080, false);
     primaryWindow->init();
 
     inputManager = std::make_unique<InputManager>(primaryWindow.get());
