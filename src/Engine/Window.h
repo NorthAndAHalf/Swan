@@ -9,6 +9,7 @@ public:
 	Window(const char* startTitle, uint32_t startHeight, uint32_t startWidth, bool startFullscreen);
 
 	void init();
+	void destroy();
 	void update();
 
 	void set_opengl_context();

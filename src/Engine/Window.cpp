@@ -52,6 +52,11 @@ void Window::init()
 	glClearColor(255.0f, 0.0f, 255.0f, 1.0f);
 }
 
+void Window::destroy()
+{
+    glfwDestroyWindow(glfwWindow);
+}
+
 void Window::set_event_callbacks()
 {
     glfwSetWindowSizeCallback(glfwWindow, [](GLFWwindow* window, int width, int height)

@@ -59,8 +59,13 @@ void Engine::init()
 void Engine::shutdown()
 {
     spdlog::info("Shutting down Engine");
+    delete m_Renderer;
+    delete timeManager;
     delete inputManager;
+    primaryWindow->destroy();
+    delete primaryWindow;
     delete eventsystem;
+    glfwTerminate();
 }
 
 void Engine::start_main_loop()
