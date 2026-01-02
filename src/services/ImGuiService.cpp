@@ -32,19 +32,19 @@ void ImGuiService::init()
 	// Subscribe to events
 	
 	// Events handled in this file
-    Engine::get_engine()->get_event_system().subscribe_global<FrameStartEvent, ImGuiService, &ImGuiService::on_frame_start>(this);
-	Engine::get_engine()->get_event_system().subscribe_global<FrameEndEvent, ImGuiService, &ImGuiService::on_frame_end>(this);
-    Engine::get_engine()->get_event_system().subscribe_global<WindowResizeEvent, ImGuiService, &ImGuiService::on_window_resize>(this);
-        
-
+    Engine::events().subscribe_global<FrameStartEvent, ImGuiService, &ImGuiService::on_frame_start>(this);
+	Engine::events().subscribe_global<FrameEndEvent, ImGuiService, &ImGuiService::on_frame_end>(this);
+    Engine::events().subscribe_global<WindowResizeEvent, ImGuiService, &ImGuiService::on_window_resize>(this);
+                  
+                  
 	// Events handled by ImGui
-    Engine::get_engine()->get_event_system().subscribe<KeyPressEvent, ImGuiService, &ImGuiService::on_key_press>(Layer::DEBUG, this);
-    Engine::get_engine()->get_event_system().subscribe<KeyReleaseEvent, ImGuiService, &ImGuiService::on_key_release>(Layer::DEBUG, this);
-    Engine::get_engine()->get_event_system().subscribe<CharEvent, ImGuiService, &ImGuiService::on_char_input>(Layer::DEBUG, this);
-    Engine::get_engine()->get_event_system().subscribe<MousePressEvent, ImGuiService, &ImGuiService::on_mouse_press>(Layer::DEBUG, this);
-    Engine::get_engine()->get_event_system().subscribe<MouseReleaseEvent, ImGuiService, &ImGuiService::on_mouse_release>(Layer::DEBUG, this);
-    Engine::get_engine()->get_event_system().subscribe<MouseWheelEvent, ImGuiService, &ImGuiService::on_mouse_wheel>(Layer::DEBUG, this);
-    Engine::get_engine()->get_event_system().subscribe<MouseMoveEvent, ImGuiService, &ImGuiService::on_mouse_move>(Layer::DEBUG, this);
+    Engine::events().subscribe<KeyPressEvent, ImGuiService, &ImGuiService::on_key_press>(Layer::DEBUG, this);
+    Engine::events().subscribe<KeyReleaseEvent, ImGuiService, &ImGuiService::on_key_release>(Layer::DEBUG, this);
+    Engine::events().subscribe<CharEvent, ImGuiService, &ImGuiService::on_char_input>(Layer::DEBUG, this);
+    Engine::events().subscribe<MousePressEvent, ImGuiService, &ImGuiService::on_mouse_press>(Layer::DEBUG, this);
+    Engine::events().subscribe<MouseReleaseEvent, ImGuiService, &ImGuiService::on_mouse_release>(Layer::DEBUG, this);
+    Engine::events().subscribe<MouseWheelEvent, ImGuiService, &ImGuiService::on_mouse_wheel>(Layer::DEBUG, this);
+    Engine::events().subscribe<MouseMoveEvent, ImGuiService, &ImGuiService::on_mouse_move>(Layer::DEBUG, this);
 }
 
 void ImGuiService::on_frame_start(FrameStartEvent& e)
@@ -55,7 +55,7 @@ void ImGuiService::on_frame_start(FrameStartEvent& e)
 
     m_Io->DisplaySize = ImVec2((float) frameBufferWidth, (float) frameBufferHeight);
 
-	float dt = Engine::get_engine()->get_time_manager().get_delta_time();
+	float dt = Engine::time().get_delta_time();
 
 	m_Io->DeltaTime = (dt > 0.0f) ? dt : (1.0f / 60.0f); // Provide a default delta time (1 frame at 60fps) if dt is 0 (as it would be on first frame)
 	ImGui_ImplOpenGL3_NewFrame();
@@ -143,7 +143,7 @@ void ImGuiService::release_user_control()
     m_HasUserControl = false;
     m_Io->ConfigFlags |= ImGuiConfigFlags_NoMouse;
     Engine::get_engine()->get_primary_window().disable_cursor();
-    Engine::get_engine()->get_event_system().queue_event<ImGuiReleaseControlEvent>();
+    Engine::events().queue_event<ImGuiReleaseControlEvent>();
 }
 
 void ImGuiService::take_user_control()
@@ -151,7 +151,7 @@ void ImGuiService::take_user_control()
     m_HasUserControl = true;
     m_Io->ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
     Engine::get_engine()->get_primary_window().enable_cursor();
-    Engine::get_engine()->get_event_system().queue_event<ImGuiTakeControlEvent>();
+    Engine::events().queue_event<ImGuiTakeControlEvent>();
 }
 
 void ImGuiService::shutdown()  

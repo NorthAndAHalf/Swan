@@ -21,13 +21,13 @@ public:
 
 	void start_main_loop();
 
-	EventSystem& get_event_system();
-
 	void set_primary_window(Window* w) { primaryWindow = w; }
 	Window& get_primary_window();
 
-	InputManager& get_input_manager();
-	TimeManager& get_time_manager();
+	static EventSystem& events();
+	static InputManager& input();
+	static TimeManager& time();
+	static Renderer& renderer();
 
 private:
 	Engine();
@@ -41,5 +41,5 @@ private:
 	static InputManager* inputManager;
 	static TimeManager* timeManager;
 
-	static Renderer* renderer;
+	static Renderer* m_Renderer;
 };

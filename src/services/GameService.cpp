@@ -9,17 +9,17 @@ GameService::GameService()
 
 void GameService::init()
 {
-	Engine::get_engine()->get_event_system().subscribe_global<UpdateEvent, GameService, &GameService::on_update>(this);
-	Engine::get_engine()->get_event_system().subscribe<KeyPressEvent, GameService, &GameService::on_key_press_event>(Layer::GAME, this);
-	Engine::get_engine()->get_event_system().subscribe_global<MousePressEvent, GameService, &GameService::on_mouse_press_event>(this);
+	Engine::events().subscribe_global<UpdateEvent, GameService, &GameService::on_update>(this);
+	Engine::events().subscribe<KeyPressEvent, GameService, &GameService::on_key_press_event>(Layer::GAME, this);
+	Engine::events().subscribe_global<MousePressEvent, GameService, &GameService::on_mouse_press_event>(this);
 }
 
 void GameService::on_update(UpdateEvent& e)
 {
-	if (Engine::get_engine()->get_input_manager().get_key(SF_KEY_A))
+	if (Engine::input().get_key(SF_KEY_A))
 	{
-		double xpos = Engine::get_engine()->get_input_manager().get_mouseX();
-		double ypos = Engine::get_engine()->get_input_manager().get_mouseY();
+		double xpos = Engine::input().get_mouseX();
+		double ypos = Engine::input().get_mouseY();
 		spdlog::trace("Mouse Position: X = {0}, Y = {1}", xpos, ypos);
 	}
 }

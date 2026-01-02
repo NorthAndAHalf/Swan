@@ -10,8 +10,8 @@ InputManager::InputManager(Window* w)
 void InputManager::init()
 {
     spdlog::info("Intialising input manager");
-    Engine::get_engine()->get_event_system().subscribe<ImGuiReleaseControlEvent, InputManager, &InputManager::on_imgui_release_control>(Layer::ENGINE, this);
-    Engine::get_engine()->get_event_system().subscribe<ImGuiTakeControlEvent, InputManager, &InputManager::on_imgui_take_control>(Layer::ENGINE, this);
+    Engine::events().subscribe<ImGuiReleaseControlEvent, InputManager, &InputManager::on_imgui_release_control>(Layer::ENGINE, this);
+    Engine::events().subscribe<ImGuiTakeControlEvent, InputManager, &InputManager::on_imgui_take_control>(Layer::ENGINE, this);
 }
 
 void InputManager::set_window(Window* w)
