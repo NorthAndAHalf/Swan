@@ -51,7 +51,7 @@ void ImGuiService::on_frame_start(FrameStartEvent& e)
 {
     int frameBufferWidth;
     int frameBufferHeight;
-    Engine::get_engine()->get_primary_window().get_framebuffer_size(&frameBufferWidth, &frameBufferHeight);
+    Engine::get_engine().get_primary_window().get_framebuffer_size(&frameBufferWidth, &frameBufferHeight);
 
     m_Io->DisplaySize = ImVec2((float) frameBufferWidth, (float) frameBufferHeight);
 
@@ -75,7 +75,7 @@ void ImGuiService::on_frame_end(FrameEndEvent& e)
 	{
 		ImGui::UpdatePlatformWindows();
 		ImGui::RenderPlatformWindowsDefault();
-		Engine::get_engine()->get_primary_window().set_opengl_context();
+		Engine::get_engine().get_primary_window().set_opengl_context();
 	}
 }
 
@@ -134,7 +134,7 @@ void ImGuiService::on_mouse_wheel(MouseWheelEvent& e) {
 
 void ImGuiService::on_mouse_move(MouseMoveEvent& e) {
     float xScale, yScale;
-    Engine::get_engine()->get_primary_window().get_content_scale(&xScale, &yScale);
+    Engine::get_engine().get_primary_window().get_content_scale(&xScale, &yScale);
     m_Io->AddMousePosEvent(e.xpos, e.ypos);
 }
 
@@ -142,7 +142,7 @@ void ImGuiService::release_user_control()
 {
     m_HasUserControl = false;
     m_Io->ConfigFlags |= ImGuiConfigFlags_NoMouse;
-    Engine::get_engine()->get_primary_window().disable_cursor();
+    Engine::get_engine().get_primary_window().disable_cursor();
     Engine::events().queue_event<ImGuiReleaseControlEvent>();
 }
 
@@ -150,7 +150,7 @@ void ImGuiService::take_user_control()
 {
     m_HasUserControl = true;
     m_Io->ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
-    Engine::get_engine()->get_primary_window().enable_cursor();
+    Engine::get_engine().get_primary_window().enable_cursor();
     Engine::events().queue_event<ImGuiTakeControlEvent>();
 }
 

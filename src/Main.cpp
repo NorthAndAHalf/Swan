@@ -16,7 +16,7 @@ int main()
 	
 	try
 	{
-		Engine::get_engine()->init();
+		Engine::get_engine().init();
 	}
 	catch (const std::exception& e)
 	{
@@ -31,7 +31,7 @@ int main()
 
 	try
 	{
-		Engine::get_engine()->start_main_loop();
+		Engine::get_engine().start_main_loop();
 	}
 	catch (const std::exception& e)
 	{
@@ -39,5 +39,5 @@ int main()
 		return -1;
 	}
 
-	Engine::get_engine()->shutdown();
+	Engine::get_engine().shutdown();
 }

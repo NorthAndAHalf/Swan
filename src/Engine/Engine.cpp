@@ -3,28 +3,19 @@
 #include <stdexcept>
 #include "Renderer/RenderPipelines/BasicPipeline.h"
 
-Engine* Engine::instance = nullptr;
-std::mutex Engine::mtx;
-
-EventSystem* Engine::eventsystem = nullptr;
-Window* Engine::primaryWindow = nullptr;
-InputManager* Engine::inputManager = nullptr;
-TimeManager* Engine::timeManager = nullptr;
-Renderer* Engine::m_Renderer = nullptr;
+std::unique_ptr<EventSystem> Engine::eventsystem = nullptr;
+std::unique_ptr<Window> Engine::primaryWindow = nullptr;
+std::unique_ptr<InputManager> Engine::inputManager = nullptr;
+std::unique_ptr<TimeManager> Engine::timeManager = nullptr;
+std::unique_ptr<Renderer> Engine::m_Renderer = nullptr;
 
 Engine::Engine()
 {
 }
 
-Engine* Engine::get_engine()
+Engine& Engine::get_engine()
 {
-    if (instance == nullptr) {
-        std::lock_guard<std::mutex> lock(mtx);
-        if (instance == nullptr) {
-            instance = new Engine();
-        }
-    }
-
+    static Engine instance;
     return instance;
 }
 
@@ -39,18 +30,18 @@ void Engine::init()
         throw std::runtime_error("Failed to initialise GLFW");
     }
     
-    eventsystem = new EventSystem();
+    eventsystem = std::make_unique<EventSystem>();
     eventsystem->init();
 
-    primaryWindow = new Window("Snowfall", 1080, 1920, false);
+    primaryWindow = std::make_unique<Window>("Snowfall", 1080, 1920, false);
     primaryWindow->init();
 
-    inputManager = new InputManager(primaryWindow);
+    inputManager = std::make_unique<InputManager>(primaryWindow.get());
     inputManager->init();
 
-    timeManager = new TimeManager();
+    timeManager = std::make_unique<TimeManager>();
 
-    m_Renderer = new Renderer();
+    m_Renderer = std::make_unique<Renderer>();
     m_Renderer->set_pipeline(std::make_shared<BasicPipeline>());
 
     spdlog::info("Engine initialised successfully");
@@ -59,12 +50,7 @@ void Engine::init()
 void Engine::shutdown()
 {
     spdlog::info("Shutting down Engine");
-    delete m_Renderer;
-    delete timeManager;
-    delete inputManager;
     primaryWindow->destroy();
-    delete primaryWindow;
-    delete eventsystem;
     glfwTerminate();
 }
 

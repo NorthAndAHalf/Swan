@@ -3,6 +3,7 @@
 #include <mutex>
 #include "Events/EventSystem.h"
 #include "Window.h"
+#include <memory>
 
 #include "Engine/InputManager.h"
 #include "Engine/TimeManager.h"
@@ -14,14 +15,14 @@ class Engine
 public:
 	Engine(const Engine& obj) = delete;
 
-	static Engine* get_engine();
+	static Engine& get_engine();
 
 	void init();
 	void shutdown();
 
 	void start_main_loop();
 
-	void set_primary_window(Window* w) { primaryWindow = w; }
+	void set_primary_window(Window* w) { primaryWindow.reset(w); }
 	Window& get_primary_window();
 
 	static EventSystem& events();
@@ -32,14 +33,11 @@ public:
 private:
 	Engine();
 
-	static Engine* instance;
-	static std::mutex mtx;
+	static std::unique_ptr<Window> primaryWindow;
+	static std::unique_ptr<EventSystem> eventsystem;
 
-	static Window* primaryWindow;
-	static EventSystem* eventsystem;
+	static std::unique_ptr<InputManager> inputManager;
+	static std::unique_ptr<TimeManager> timeManager;
 
-	static InputManager* inputManager;
-	static TimeManager* timeManager;
-
-	static Renderer* m_Renderer;
+	static std::unique_ptr<Renderer> m_Renderer;
 };

@@ -121,7 +121,7 @@ public:
     void dispatch_queued_events() 
     {
         swap_queues();
-        for (int i = 0; i < m_DispatchQueueHead; i++)
+        for (unsigned int i = 0; i < m_DispatchQueueHead; i++)
         {
             Event* e = m_DispatchQueue[i];
             notify_subscribers(*e);
