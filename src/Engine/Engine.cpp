@@ -38,8 +38,9 @@ void Engine::init()
     {
         throw std::runtime_error("Failed to initialise GLFW");
     }
-
+    
     eventsystem = new EventSystem();
+    eventsystem->init();
 
     primaryWindow = new Window("Snowfall", 1080, 1920, false);
     primaryWindow->init();

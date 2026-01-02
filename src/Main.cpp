@@ -24,10 +24,10 @@ int main()
 		return -1;
 	}
 
-	ImGuiService imguiService = ImGuiService();
-	imguiService.init();
-	GameService gameService = GameService();
-	gameService.init();
+	ImGuiService* imguiService = new ImGuiService();
+	imguiService->init();
+	GameService* gameService = new GameService();
+	gameService->init();
 
 	try
 	{

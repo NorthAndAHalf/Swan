@@ -11,6 +11,8 @@
 #include "Memory/LinearBuffer.h"
 #include "spdlog/spdlog.h"
 
+constexpr uint32_t EVENT_QUEUE_COUNT = 5000;
+
 enum class Layer
 {
     DEBUG = 0,
@@ -18,7 +20,9 @@ enum class Layer
     GAME = 2
 };
 
-class TypeIdentifier {
+// Static counter will not work cross DLL, so will need to be refactored if cross DLL compilation becomes required
+class TypeIdentifier 
+{
 public:
     template<typename T>
     static uint32_t get_id() {
@@ -29,7 +33,8 @@ private:
     inline static std::atomic<uint32_t> m_Counter{ 1 };
 };
 
-struct EventDelegate {
+struct EventDelegate
+{
     using StubFunc = void(*)(void* instance, Event& event);
 
     void* instance = nullptr;
@@ -60,43 +65,69 @@ private:
 
 class EventSystem {
 public:
+    void init()
+    {
+        spdlog::info("Allocating event buffers");
+
+        m_EventQueue1 = new Event* [EVENT_QUEUE_COUNT];
+        m_EventQueue2 = new Event* [EVENT_QUEUE_COUNT];
+
+        m_InputQueue = m_EventQueue1;
+        m_DispatchQueue = m_EventQueue2;
+
+        m_InputBuffer = &m_EventBuffer1;
+        m_DispatchBuffer = &m_EventBuffer2;
+    }
+
     // --- Event Dispatching ---
 
     template<typename T, typename... Args>
-    void queue_event(Args&&... args) {
-        LinearBuffer& buffer = get_dispatch_buffer();
-        auto& queue = get_dispatch_queue();
+    void queue_event(Args&&... args) 
+    {
+        if (m_InputQueueHead >= EVENT_QUEUE_COUNT)
+        {
+            spdlog::error("Event queue overlow");
+            return;
+        }
 
-        void* address = buffer.allocate(sizeof(T));
-        if (!address) {
-            spdlog::critical("Event Buffer out of memory!");
+        void* address = m_InputBuffer->allocate(sizeof(T), alignof(T));
+        if (!address) 
+        {
+            spdlog::error("Event Buffer out of memory!");
             return;
         }
 
         T* e = new (address) T(std::forward<Args>(args)...);
         e->typeId = TypeIdentifier::get_id<T>();
-        queue.push_back(e);
+        m_InputQueue[m_InputQueueHead] = e;
+        m_InputQueueHead++;
     }
 
     template<typename T, typename... Args>
-    void fire_event(Args&&... args) {
+    void fire_event(Args&&... args) 
+    {
         T e = T(std::forward<Args>(args)...);
         e.typeId = TypeIdentifier::get_id<T>();
         notify_subscribers(e);
     }
 
-    void dispatch_queued_events() {
-        std::vector<Event*>& queue = get_dispatch_queue();
-        for (Event* e : queue) {
+    void dispatch_queued_events() 
+    {
+        swap_queues();
+        for (int i = 0; i < m_DispatchQueueHead; i++)
+        {
+            Event* e = m_DispatchQueue[i];
             notify_subscribers(*e);
             e->~Event();
         }
-        swap_queues();
+        clear_dispatch_queue();
     }
 
 private:
-    void notify_subscribers(Event& e) {
-        for (DelegateBucket& bucket : m_LayerBuckets) {
+    void notify_subscribers(Event& e)
+    {
+        for (DelegateBucket& bucket : m_LayerBuckets) 
+        {
             bucket.propagate_event(e);
             if (e.handled) break;
         }
@@ -162,21 +193,39 @@ private:
 
     LinearBuffer m_EventBuffer1{ 1024 * 64 }; // 64KB
     LinearBuffer m_EventBuffer2{ 1024 * 64 }; // 64KB
-    std::vector<Event*> m_EventQueue1;
-    std::vector<Event*> m_EventQueue2;
 
-    bool swapQueues;
-    std::vector<Event*>& get_input_queue() { return swapQueues ? m_EventQueue1 : m_EventQueue2; }
-    std::vector<Event*>& get_dispatch_queue() { return !swapQueues ? m_EventQueue1 : m_EventQueue2; }
-    LinearBuffer& get_dispatch_buffer() { return !swapQueues ? m_EventBuffer1 : m_EventBuffer2; }
+    Event** m_EventQueue1;
+    Event** m_EventQueue2;
+
+    uint32_t m_InputQueueHead;
+    Event** m_InputQueue;
+    LinearBuffer* m_InputBuffer;
+
+    uint32_t m_DispatchQueueHead;
+    Event** m_DispatchQueue;  
+    LinearBuffer* m_DispatchBuffer;
 
     void swap_queues()
     {
-        auto& dispatchQueue = get_dispatch_queue();
-        auto& dispatchBuffer = get_dispatch_buffer();
+        Event** newInputQueue = m_DispatchQueue;
+        Event** newDispatchQueue = m_InputQueue;
 
-        dispatchQueue.clear();
-        dispatchBuffer.reset();
-        swapQueues = !swapQueues;
+        LinearBuffer* newInputBuffer = m_DispatchBuffer;
+        LinearBuffer* newDispatchBuffer = m_InputBuffer;
+
+        m_InputQueue = newInputQueue;
+        m_DispatchQueue = newDispatchQueue;
+
+        m_InputBuffer = newInputBuffer;
+        m_DispatchBuffer = newDispatchBuffer;
+
+        m_DispatchQueueHead = m_InputQueueHead;
+        m_InputQueueHead = 0; // Dispatch queue should always be 0 when queues are swapped
+    }
+
+    void clear_dispatch_queue()
+    {
+        m_DispatchQueueHead = 0;
+        m_DispatchBuffer->reset();
     }
 };

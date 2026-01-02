@@ -5,14 +5,14 @@
 class LinearBuffer
 {
 public:
-	LinearBuffer(size_t _size);
+	LinearBuffer(size_t size);
 	~LinearBuffer();
 
-	void* allocate(size_t bytes);
+	void* allocate(size_t bytes, size_t alignment);
 	void reset();
 
 private:
-	uint8_t* data;
-	size_t size;
-	size_t offset;
+	uint8_t* m_Data;
+	size_t m_Size;
+	size_t m_Offset;
 };
