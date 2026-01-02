@@ -5,6 +5,7 @@
 
 #include "Engine/Engine.h"
 #include "spdlog/spdlog.h"
+#include "imgui_internal.h"
 
 ImGuiService::ImGuiService()
 {
@@ -60,6 +61,7 @@ void ImGuiService::on_frame_start(FrameStartEvent& e)
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui::NewFrame();
 	ImGui::ShowDemoWindow();
+    m_ImGuiUsedEscape = ImGui::GetKeyOwner(ImGuiKey_Escape) != ImGuiKeyOwner_NoOwner;
 }
 
 void ImGuiService::on_frame_end(FrameEndEvent& e)
@@ -86,7 +88,17 @@ void ImGuiService::on_key_press(KeyPressEvent& e) {
     update_key_modifiers(e.mods);
     ImGuiKey key = ImGuiHelpers::sf_key_to_imgui_key(e.keycode);
     m_Io->AddKeyEvent(key, true);
-    if (m_Io->WantCaptureKeyboard) e.handled = true;
+
+    if (m_HasUserControl)
+    {
+        e.handled = true;
+    }
+
+    if (e.keycode == SF_KEY_ESCAPE && !m_ImGuiUsedEscape)
+    {
+        if (m_HasUserControl) release_user_control();
+        else take_user_control();
+    }
 }
 
 void ImGuiService::on_key_release(KeyReleaseEvent& e) {
@@ -124,6 +136,22 @@ void ImGuiService::on_mouse_move(MouseMoveEvent& e) {
     float xScale, yScale;
     Engine::get_engine()->get_primary_window().get_content_scale(&xScale, &yScale);
     m_Io->AddMousePosEvent(e.xpos, e.ypos);
+}
+
+void ImGuiService::release_user_control()
+{
+    m_HasUserControl = false;
+    m_Io->ConfigFlags |= ImGuiConfigFlags_NoMouse;
+    Engine::get_engine()->get_primary_window().disable_cursor();
+    Engine::get_engine()->get_event_system().queue_event<ImGuiReleaseControlEvent>();
+}
+
+void ImGuiService::take_user_control()
+{
+    m_HasUserControl = true;
+    m_Io->ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
+    Engine::get_engine()->get_primary_window().enable_cursor();
+    Engine::get_engine()->get_event_system().queue_event<ImGuiTakeControlEvent>();
 }
 
 void ImGuiService::shutdown()  

@@ -16,8 +16,9 @@ constexpr uint32_t EVENT_QUEUE_COUNT = 5000;
 enum class Layer
 {
     DEBUG = 0,
-    UI = 1,
-    GAME = 2
+    ENGINE = 1,
+    UI = 2,
+    GAME = 3
 };
 
 // Static counter will not work cross DLL, so will need to be refactored if cross DLL compilation becomes required
@@ -195,7 +196,7 @@ public:
 
 private:
     DelegateBucket m_GlobalBucket;
-    std::array<DelegateBucket, 3> m_LayerBuckets;
+    std::array<DelegateBucket, 4> m_LayerBuckets;
 
     LinearBuffer m_EventBuffer1{ 1024 * 64 }; // 64KB
     LinearBuffer m_EventBuffer2{ 1024 * 64 }; // 64KB

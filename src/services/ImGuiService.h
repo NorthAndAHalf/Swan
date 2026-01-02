@@ -26,7 +26,12 @@ private:
 	void on_mouse_wheel(MouseWheelEvent& e);
 	void on_mouse_move(MouseMoveEvent& e);
     
+	void release_user_control();
+	void take_user_control();
+	bool m_HasUserControl;
+
     ImGuiIO* m_Io;
+	bool m_ImGuiUsedEscape = false;
 };
 
 namespace ImGuiHelpers

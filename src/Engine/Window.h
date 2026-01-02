@@ -32,6 +32,9 @@ public:
 		return (isFullscreen) ? fullscreenWidth : width; 
 	}
 
+	void enable_cursor();
+	void disable_cursor();
+
 	void get_framebuffer_size(int* width, int* height);
 	void get_content_scale(float* x, float* y);
 
@@ -48,7 +51,7 @@ public:
 	// Input Polling
 	bool get_key(int keycode);
 	bool get_mouse_button(int button);
-	void get_cursor(double* xpos, double* ypos);
+	void get_mouse_delta(double* xpos, double* ypos);
 
 private:
 	const char* title;
@@ -61,6 +64,9 @@ private:
 	bool isFullscreen;
 
 	GLFWwindow* glfwWindow;
+
+	float m_LastX;
+	float m_LastY;
 
 	void set_event_callbacks();
 };

@@ -18,8 +18,8 @@ void GameService::on_update(UpdateEvent& e)
 {
 	if (Engine::get_engine()->get_input_manager().get_key(SF_KEY_A))
 	{
-		double xpos = Engine::get_engine()->get_input_manager().get_cursorX();
-		double ypos = Engine::get_engine()->get_input_manager().get_cursorY();
+		double xpos = Engine::get_engine()->get_input_manager().get_mouseX();
+		double ypos = Engine::get_engine()->get_input_manager().get_mouseY();
 		spdlog::trace("Mouse Position: X = {0}, Y = {1}", xpos, ypos);
 	}
 }

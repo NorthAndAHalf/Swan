@@ -43,7 +43,11 @@ void Window::init()
 	
 	set_event_callbacks();
 
-	glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    if (glfwRawMouseMotionSupported()) 
+    {
+        glfwSetInputMode(glfwWindow, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+    }
+    enable_cursor();
 
 	glClearColor(255.0f, 0.0f, 255.0f, 1.0f);
 }
@@ -164,9 +168,26 @@ bool Window::get_mouse_button(int button)
 	return glfwGetMouseButton(glfwWindow, button);
 }
 
-void Window::get_cursor(double* xpos, double* ypos)
+void Window::get_mouse_delta(double* p_xpos, double* p_ypos)
 {
-	glfwGetCursorPos(glfwWindow, xpos, ypos);
+    double xpos, ypos;
+    glfwGetCursorPos(glfwWindow, &xpos, &ypos);
+
+    *p_xpos = (float)(xpos - m_LastX);
+    *p_ypos = (float)(ypos - m_LastY);
+
+    m_LastX = xpos;
+    m_LastY = ypos;
+}
+
+void Window::enable_cursor()
+{
+    glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+}
+
+void Window::disable_cursor()
+{
+    glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
 void Window::get_framebuffer_size(int* width, int* height)

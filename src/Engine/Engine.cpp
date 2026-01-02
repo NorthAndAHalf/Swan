@@ -46,6 +46,8 @@ void Engine::init()
     primaryWindow->init();
 
     inputManager = new InputManager(primaryWindow);
+    inputManager->init();
+
     timeManager = new TimeManager();
 
     renderer = new Renderer();

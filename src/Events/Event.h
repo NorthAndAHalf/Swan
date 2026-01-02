@@ -116,3 +116,15 @@ public:
 	const double x_offset;
 	const double y_offset;
 };
+
+class ImGuiTakeControlEvent : public Event
+{
+public:
+	ImGuiTakeControlEvent() {}
+};
+
+class ImGuiReleaseControlEvent : public Event
+{
+public:
+	ImGuiReleaseControlEvent() {}
+};
