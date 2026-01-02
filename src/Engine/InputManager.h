@@ -15,11 +15,6 @@ public:
 	double get_cursorX();
 	double get_cursorY();
 
-	void block_inputs();
-	void unblock_inputs();
-
 private:
 	Window* mWindow;
-
-	bool isBlockingInputs;
 };

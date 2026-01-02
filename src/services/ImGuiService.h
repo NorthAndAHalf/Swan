@@ -1,9 +1,10 @@
 #pragma once
 
-#include "Events/EventListener.h"
+#include "Events/Event.h"
 #include "imgui/imgui.h"
+#include "Core.h"
 
-class ImGuiService : public EventListener
+class ImGuiService
 {
 public:
 	ImGuiService();
@@ -12,8 +13,25 @@ public:
 	
 	void shutdown();
 
-	virtual void on_frame_start() override;
-	virtual void on_frame_end() override;
-
-	virtual void on_event(Event& e) override;
+private:
+	void on_frame_start(FrameStartEvent& e);
+	void on_frame_end(FrameEndEvent& e);
+	void on_window_resize(WindowResizeEvent& e);
+	void update_key_modifiers(int mods);
+	void on_key_press(KeyPressEvent& e);
+	void on_key_release(KeyReleaseEvent& e);
+	void on_char_input(CharEvent& e);
+	void on_mouse_press(MousePressEvent& e);
+	void on_mouse_release(MouseReleaseEvent& e);
+	void on_mouse_wheel(MouseWheelEvent& e);
+	void on_mouse_move(MouseMoveEvent& e);
+    
+    ImGuiIO* m_Io;
 };
+
+namespace ImGuiHelpers
+{
+	ImGuiKey sf_key_to_imgui_key(int key);
+	ImGuiMouseButton sf_mouse_button_to_imgui_mouse_button(int button);
+	ImGuiKey sf_gamepad_button_to_imgui_key(int button);
+}

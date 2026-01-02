@@ -6,7 +6,7 @@
 Engine* Engine::instance = nullptr;
 std::mutex Engine::mtx;
 
-EventDispatcher* Engine::eventDispatcher = nullptr;
+EventSystem* Engine::eventsystem = nullptr;
 Window* Engine::primaryWindow = nullptr;
 InputManager* Engine::inputManager = nullptr;
 TimeManager* Engine::timeManager = nullptr;
@@ -30,15 +30,17 @@ Engine* Engine::get_engine()
 
 void Engine::init()
 {
-    spdlog::info("Initialising Engine");
+    spdlog::info("Starting Snowfall");
 
+    // Move to static function in window class
     spdlog::info("Initialising GLFW");
     if (!glfwInit())
     {
         throw std::runtime_error("Failed to initialise GLFW");
     }
-
-    eventDispatcher = new EventDispatcher();
+    
+    eventsystem = new EventSystem();
+    eventsystem->init();
 
     primaryWindow = new Window("Snowfall", 1080, 1920, false);
     primaryWindow->init();
@@ -54,28 +56,30 @@ void Engine::init()
 
 void Engine::shutdown()
 {
-    spdlog::info("Shutting down engine");
+    spdlog::info("Shutting down Engine");
     delete inputManager;
+    delete eventsystem;
 }
 
 void Engine::start_main_loop()
 {
     while (!primaryWindow->window_should_close())
     {
-        eventDispatcher->dispatch_frame_start();
+        eventsystem->dispatch_queued_events();
+        eventsystem->fire_event<FrameStartEvent>();
 
-        eventDispatcher->dispatch_update();
+        eventsystem->fire_event<UpdateEvent>();
         renderer->update();
         primaryWindow->update();
 
-        eventDispatcher->dispatch_frame_end();
+        eventsystem->fire_event<FrameEndEvent>();
     }
 }
 
-EventDispatcher& Engine::get_event_dispatcher()
+EventSystem& Engine::get_event_system()
 {
-    SF_ASSERT(eventDispatcher, "Event dispatcher is null");
-    return *eventDispatcher;
+    SF_ASSERT(eventsystem, "Event system is null");
+    return *eventsystem;
 }
 
 Window& Engine::get_primary_window()

@@ -1,8 +1,8 @@
 #pragma once
-#include <mutex>
-#include "events/EventDispatcher.h"
-#include "Window.h"
 #include "Core.h"
+#include <mutex>
+#include "Events/EventSystem.h"
+#include "Window.h"
 
 #include "Engine/InputManager.h"
 #include "Engine/TimeManager.h"
@@ -21,7 +21,7 @@ public:
 
 	void start_main_loop();
 
-	EventDispatcher& get_event_dispatcher();
+	EventSystem& get_event_system();
 
 	void set_primary_window(Window* w) { primaryWindow = w; }
 	Window& get_primary_window();
@@ -36,7 +36,7 @@ private:
 	static std::mutex mtx;
 
 	static Window* primaryWindow;
-	static EventDispatcher* eventDispatcher;
+	static EventSystem* eventsystem;
 
 	static InputManager* inputManager;
 	static TimeManager* timeManager;

@@ -24,8 +24,6 @@ project "Snowfall"
         "vendor/imgui/imgui/*.h", 
         "vendor/imgui/imgui/backends/imgui_impl_opengl3.cpp",
         "vendor/imgui/imgui/backends/imgui_impl_opengl3.h", 
-        "vendor/imgui/imgui/backends/imgui_impl_glfw.cpp", 
-        "vendor/imgui/imgui/backends/imgui_impl_glfw.h",
         "vendor/imgui/imgui/misc/debuggers/imgui.natvis",
         "vendor/imgui/imgui/misc/debuggers/imgui.natstepfilter",
         "vendor/imgui/imgui/misc/cpp/imgui_stdlib.*"

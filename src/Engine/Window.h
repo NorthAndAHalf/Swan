@@ -1,7 +1,7 @@
 #pragma once
 #include <stdint.h>
 #include "GLFW/glfw3.h"
-#include "Events/EventDispatcher.h"
+#include "Events/eventsystem.h"
 
 class Window
 {
@@ -10,8 +10,6 @@ public:
 
 	void init();
 	void update();
-
-	void init_imgui();
 
 	void set_opengl_context();
 
@@ -33,6 +31,9 @@ public:
 	uint32_t get_width() { 
 		return (isFullscreen) ? fullscreenWidth : width; 
 	}
+
+	void get_framebuffer_size(int* width, int* height);
+	void get_content_scale(float* x, float* y);
 
 	void set_fullscreen_height(uint32_t height) { fullscreenHeight = height; }
 	void set_fullscreen_width(uint32_t width) { fullscreenWidth = width;  }
@@ -63,3 +64,15 @@ private:
 
 	void set_event_callbacks();
 };
+
+namespace GLFWHelpers {
+	// Key and Button Mappings
+	int glfw_key_to_sf_key(int glfw_key);
+	int glfw_mouse_button_to_sf_mouse_button(int glfw_button);
+	int glfw_mods_to_sf_mods(int glfw_mods);
+	int glfw_gamepad_button_to_sf_gamepad_button(int glfw_button);
+
+	// Joystick and Axis Mappings
+	int glfw_joystick_to_sf_joystick(int glfw_joystick);
+	int glfw_gamepad_axis_to_sf_gamepad_axis(int glfw_axis);
+}

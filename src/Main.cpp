@@ -1,11 +1,9 @@
 #include "spdlog/spdlog.h"
 #include "Engine/Engine.h"
-#include "events/EventListener.h"
-#include "Engine/Window.h"
 #include "services/GameService.h"
 #include "services/ImGuiService.h"
 
-#ifdef SD_DEBUG
+#ifdef SF_DEBUG
 #define SPD_DEBUG_LEVEL(x) x;
 #else
 #define SPD_DEBUG_LEVEL(x);
@@ -26,11 +24,10 @@ int main()
 		return -1;
 	}
 
-	ImGuiService imguiService = ImGuiService();
-	imguiService.init();
-	GameService gameService = GameService();
-	Engine::get_engine()->get_event_dispatcher().subscribe_overlay(&imguiService);
-	Engine::get_engine()->get_event_dispatcher().subscribe(&gameService);
+	ImGuiService* imguiService = new ImGuiService();
+	imguiService->init();
+	GameService* gameService = new GameService();
+	gameService->init();
 
 	try
 	{
