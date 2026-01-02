@@ -79,6 +79,12 @@ public:
         m_DispatchBuffer = &m_EventBuffer2;
     }
 
+    ~EventSystem()
+    {
+        delete[] m_EventQueue1;
+        delete[] m_EventQueue2;
+    }
+
     // --- Event Dispatching ---
 
     template<typename T, typename... Args>

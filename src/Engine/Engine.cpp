@@ -30,7 +30,7 @@ Engine* Engine::get_engine()
 
 void Engine::init()
 {
-    spdlog::info("Initialising Engine");
+    spdlog::info("Starting Snowfall");
 
     // Move to static function in window class
     spdlog::info("Initialising GLFW");
@@ -56,8 +56,9 @@ void Engine::init()
 
 void Engine::shutdown()
 {
-    spdlog::info("Shutting down engine");
+    spdlog::info("Shutting down Engine");
     delete inputManager;
+    delete eventsystem;
 }
 
 void Engine::start_main_loop()
