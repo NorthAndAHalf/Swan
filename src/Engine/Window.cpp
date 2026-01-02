@@ -48,6 +48,7 @@ void Window::init()
         glfwSetInputMode(glfwWindow, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
     }
     enable_cursor();
+    glfwGetCursorPos(glfwWindow, &m_LastX, &m_LastY);
 
 	glClearColor(255.0f, 0.0f, 255.0f, 1.0f);
 }

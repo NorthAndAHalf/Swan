@@ -66,8 +66,8 @@ private:
 
 	GLFWwindow* glfwWindow;
 
-	float m_LastX;
-	float m_LastY;
+	double m_LastX;
+	double m_LastY;
 
 	void set_event_callbacks();
 };
