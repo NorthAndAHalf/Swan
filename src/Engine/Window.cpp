@@ -54,8 +54,6 @@ void Window::init()
     }
     enable_cursor();
     glfwGetCursorPos(glfwWindow, &m_LastX, &m_LastY);
-
-	glClearColor(255.0f, 0.0f, 255.0f, 1.0f);
 }
 
 void Window::destroy()
@@ -129,7 +127,6 @@ void Window::update()
 {
 	glfwSwapBuffers(glfwWindow);
 	glfwPollEvents();
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void Window::set_opengl_context()

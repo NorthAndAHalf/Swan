@@ -8,7 +8,7 @@
 #include "Engine/InputManager.h"
 #include "Engine/TimeManager.h"
 
-#include "Renderer/Renderer.h"
+#include "Rendering/OpenGLRenderer.h"
 
 class Engine
 {
@@ -28,7 +28,7 @@ public:
 	static EventSystem& events();
 	static InputManager& input();
 	static TimeManager& time();
-	static Renderer& renderer();
+	static OpenGLRenderer& renderer();
 
 private:
 	Engine();
@@ -39,5 +39,5 @@ private:
 	static std::unique_ptr<InputManager> inputManager;
 	static std::unique_ptr<TimeManager> timeManager;
 
-	static std::unique_ptr<Renderer> m_Renderer;
+	static std::unique_ptr<OpenGLRenderer> m_Renderer;
 };

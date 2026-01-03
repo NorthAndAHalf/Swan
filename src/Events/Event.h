@@ -22,18 +22,6 @@ public:
 	UpdateEvent() {}
 };
 
-class FrameStartEvent : public Event
-{
-public:
-	FrameStartEvent() {}
-};
-
-class FrameEndEvent : public Event
-{
-public:
-	FrameEndEvent() {}
-};
-
 class WindowResizeEvent : public Event
 {
 public:

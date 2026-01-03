@@ -32,8 +32,7 @@ void ImGuiService::init()
 	// Subscribe to events
 	
 	// Events handled in this file
-    Engine::events().subscribe_global<FrameStartEvent, ImGuiService, &ImGuiService::on_frame_start>(this);
-	Engine::events().subscribe_global<FrameEndEvent, ImGuiService, &ImGuiService::on_frame_end>(this);
+    Engine::events().subscribe_global<UpdateEvent, ImGuiService, &ImGuiService::on_update>(this);
     Engine::events().subscribe_global<WindowResizeEvent, ImGuiService, &ImGuiService::on_window_resize>(this);
                   
                   
@@ -47,7 +46,7 @@ void ImGuiService::init()
     Engine::events().subscribe<MouseMoveEvent, ImGuiService, &ImGuiService::on_mouse_move>(Layer::DEBUG, this);
 }
 
-void ImGuiService::on_frame_start(FrameStartEvent& e)
+void ImGuiService::on_update(UpdateEvent& e)
 {
     int frameBufferWidth;
     int frameBufferHeight;
@@ -62,21 +61,17 @@ void ImGuiService::on_frame_start(FrameStartEvent& e)
 	ImGui::NewFrame();
 	ImGui::ShowDemoWindow();
     m_ImGuiUsedEscape = ImGui::GetKeyOwner(ImGuiKey_Escape) != ImGuiKeyOwner_NoOwner;
-}
 
-void ImGuiService::on_frame_end(FrameEndEvent& e)
-{
-	
-	ImGui::Render();
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-	// Update and Render additional Platform Windows
-	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-	{
-		ImGui::UpdatePlatformWindows();
-		ImGui::RenderPlatformWindowsDefault();
-		Engine::get_engine().get_primary_window().set_opengl_context();
-	}
+    // Update and Render additional Platform Windows
+    if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+    {
+        ImGui::UpdatePlatformWindows();
+        ImGui::RenderPlatformWindowsDefault();
+        Engine::get_engine().get_primary_window().set_opengl_context();
+    }
 }
 
 void ImGuiService::on_window_resize(WindowResizeEvent& e)

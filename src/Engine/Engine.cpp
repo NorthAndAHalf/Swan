@@ -1,13 +1,13 @@
 #include "Engine.h"
 #include "spdlog/spdlog.h"
 #include <stdexcept>
-#include "Renderer/RenderPipelines/BasicPipeline.h"
+#include "Rendering/OpenGLRenderer.h"
 
 std::unique_ptr<EventSystem> Engine::eventsystem = nullptr;
 std::unique_ptr<Window> Engine::primaryWindow = nullptr;
 std::unique_ptr<InputManager> Engine::inputManager = nullptr;
 std::unique_ptr<TimeManager> Engine::timeManager = nullptr;
-std::unique_ptr<Renderer> Engine::m_Renderer = nullptr;
+std::unique_ptr<OpenGLRenderer> Engine::m_Renderer = nullptr;
 
 Engine::Engine()
 {
@@ -41,8 +41,8 @@ void Engine::init()
 
     timeManager = std::make_unique<TimeManager>();
 
-    m_Renderer = std::make_unique<Renderer>();
-    m_Renderer->set_pipeline(std::make_shared<BasicPipeline>());
+    m_Renderer = std::make_unique<OpenGLRenderer>();
+    m_Renderer->init();
 
     spdlog::info("Engine initialised successfully");
 }
@@ -58,14 +58,11 @@ void Engine::start_main_loop()
 {
     while (!primaryWindow->window_should_close())
     {
+        m_Renderer->swap_buffers();
         eventsystem->dispatch_queued_events();
-        eventsystem->fire_event<FrameStartEvent>();
-
-        eventsystem->fire_event<UpdateEvent>();
         m_Renderer->update();
+        eventsystem->fire_event<UpdateEvent>();
         primaryWindow->update();
-
-        eventsystem->fire_event<FrameEndEvent>();
     }
 }
 
@@ -93,7 +90,7 @@ TimeManager& Engine::time()
     return *timeManager;
 }
 
-Renderer& Engine::renderer()
+OpenGLRenderer& Engine::renderer()
 {
     SF_ASSERT(m_Renderer, "Renderer is null");
     return *m_Renderer;

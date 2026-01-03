@@ -14,8 +14,7 @@ public:
 	void shutdown();
 
 private:
-	void on_frame_start(FrameStartEvent& e);
-	void on_frame_end(FrameEndEvent& e);
+	void on_update(UpdateEvent& e);
 	void on_window_resize(WindowResizeEvent& e);
 	void update_key_modifiers(int mods);
 	void on_key_press(KeyPressEvent& e);
