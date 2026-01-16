@@ -13,13 +13,13 @@ Engine::Engine()
 {
 }
 
-Engine& Engine::get_engine()
+Engine& Engine::GetEngine()
 {
     static Engine instance;
     return instance;
 }
 
-void Engine::init()
+void Engine::Init()
 {
     spdlog::info("Starting Snowfall");
 
@@ -31,66 +31,66 @@ void Engine::init()
     }
     
     eventsystem = std::make_unique<EventSystem>();
-    eventsystem->init();
+    eventsystem->Init();
 
     primaryWindow = std::make_unique<Window>("Snowfall", 1920, 1080, false);
-    primaryWindow->init();
+    primaryWindow->Init();
 
     inputManager = std::make_unique<InputManager>(primaryWindow.get());
-    inputManager->init();
+    inputManager->Init();
 
     timeManager = std::make_unique<TimeManager>();
 
     m_Renderer = std::make_unique<OpenGLRenderer>();
-    m_Renderer->init();
+    m_Renderer->Init();
 
     spdlog::info("Engine initialised successfully");
 }
 
-void Engine::shutdown()
+void Engine::Shutdown()
 {
     spdlog::info("Shutting down Engine");
-    primaryWindow->destroy();
+    primaryWindow->Destroy();
     glfwTerminate();
 }
 
-void Engine::start_main_loop()
+void Engine::MainLoop()
 {
-    while (!primaryWindow->window_should_close())
+    while (!primaryWindow->WindowShouldClose())
     {
-        m_Renderer->swap_buffers();
-        eventsystem->dispatch_queued_events();
-        m_Renderer->update();
-        eventsystem->fire_event<UpdateEvent>();
-        primaryWindow->update();
+        m_Renderer->SwapBuffers();
+        eventsystem->DispatchQueuedEvents();
+        m_Renderer->Update();
+        eventsystem->FireEvent<UpdateEvent>();
+        primaryWindow->Update();
     }
 }
 
-Window& Engine::get_primary_window()
+Window& Engine::GetPrimaryWindow()
 {
     SF_ASSERT(primaryWindow, "Primary window is null");
     return *primaryWindow;
 }
 
-EventSystem& Engine::events()
+EventSystem& Engine::Events()
 {
     SF_ASSERT(eventsystem, "Event system is null");
     return *eventsystem;
 }
 
-InputManager& Engine::input()
+InputManager& Engine::Input()
 {
     SF_ASSERT(inputManager, "Input is null");
     return *inputManager;
 }
 
-TimeManager& Engine::time()
+TimeManager& Engine::Time()
 {
     SF_ASSERT(timeManager, "Time manager is null");
     return *timeManager;
 }
 
-OpenGLRenderer& Engine::renderer()
+OpenGLRenderer& Engine::Renderer()
 {
     SF_ASSERT(m_Renderer, "Renderer is null");
     return *m_Renderer;

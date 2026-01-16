@@ -16,7 +16,7 @@ int main()
 	
 	try
 	{
-		Engine::get_engine().init();
+		Engine::GetEngine().Init();
 	}
 	catch (const std::exception& e)
 	{
@@ -25,13 +25,13 @@ int main()
 	}
 
 	ImGuiService* imguiService = new ImGuiService();
-	imguiService->init();
+	imguiService->Init();
 	GameService* gameService = new GameService();
-	gameService->init();
+	gameService->Init();
 
 	try
 	{
-		Engine::get_engine().start_main_loop();
+		Engine::GetEngine().MainLoop();
 	}
 	catch (const std::exception& e)
 	{
@@ -39,5 +39,5 @@ int main()
 		return -1;
 	}
 
-	Engine::get_engine().shutdown();
+	Engine::GetEngine().Shutdown();
 }

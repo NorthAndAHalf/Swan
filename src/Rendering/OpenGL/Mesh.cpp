@@ -5,42 +5,42 @@ Mesh::Mesh(Vertex* vertexPtr, uint32_t vertexCount, uint32_t* indexPtr, uint32_t
 {
 }
 
-void Mesh::set_vertices(Vertex* ptr)
+void Mesh::SetVertices(Vertex* ptr)
 {
     m_Vertices = ptr;
 }
 
-Vertex* Mesh::get_vertices()
+Vertex* Mesh::GetVertices()
 {
     return m_Vertices;
 }
 
-void Mesh::set_vertex_count(uint32_t count)
+void Mesh::SetVertexCount(uint32_t count)
 {
     m_VertexCount = count;
 }
 
-uint32_t Mesh::get_vertex_count()
+uint32_t Mesh::GetVertexCount()
 {
     return m_VertexCount;
 }
 
-void Mesh::set_indices(uint32_t* ptr)
+void Mesh::SetIndices(uint32_t* ptr)
 {
     m_Indices = ptr;
 }
 
-uint32_t* Mesh::get_indices()
+uint32_t* Mesh::GetIndices()
 {
     return m_Indices;
 }
 
-void Mesh::set_index_count(uint32_t count)
+void Mesh::SetIndexCount(uint32_t count)
 {
     m_IndexCount = count;
 }
 
-uint32_t Mesh::get_index_count()
+uint32_t Mesh::GetIndexCount()
 {
     return m_IndexCount;
 }

@@ -15,20 +15,20 @@ class Engine
 public:
 	Engine(const Engine& obj) = delete;
 
-	static Engine& get_engine();
+	static Engine& GetEngine();
 
-	void init();
-	void shutdown();
+	void Init();
+	void Shutdown();
 
-	void start_main_loop();
+	void MainLoop();
 
-	void set_primary_window(Window* w) { primaryWindow.reset(w); }
-	Window& get_primary_window();
+	void SetPrimaryWindow(Window* w) { primaryWindow.reset(w); }
+	Window& GetPrimaryWindow();
 
-	static EventSystem& events();
-	static InputManager& input();
-	static TimeManager& time();
-	static OpenGLRenderer& renderer();
+	static EventSystem& Events();
+	static InputManager& Input();
+	static TimeManager& Time();
+	static OpenGLRenderer& Renderer();
 
 private:
 	Engine();

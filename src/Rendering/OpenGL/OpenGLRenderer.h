@@ -6,10 +6,10 @@ class OpenGLRenderer
 {
 public:
 	OpenGLRenderer();
-	void init();
+	void Init();
 
-	void swap_buffers();
-	void update();
+	void SwapBuffers();
+	void Update();
 private:
 	LinearBuffer m_VertexPool;
 	LinearBuffer m_IndexPool;

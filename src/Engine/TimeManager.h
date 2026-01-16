@@ -5,11 +5,11 @@ class TimeManager
 public:
 	TimeManager();
 
-	void update_time();
+	void UpdateTime();
 
-	double get_delta_time();
-	double get_time();
+	double GetDeltaTime();
+	double GetTime();
 private:
-	double currentFrameTime;
-	double lastFrameTime;
+	double m_CurrentFrameTime;
+	double m_LastFrameTime;
 };

@@ -4,25 +4,25 @@
 #include "glm/vec3.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/quaternion.hpp"
-#include "glm/gtx/quaternion.hpp"
 
 class MeshRenderer
 {
 public:
 	MeshRenderer(Mesh mesh);
 
-	const glm::mat4 get_model_matrix();
+	const glm::mat4 GetModelMatrix();
 
-    void set_position(const glm::vec3& pos);
-    const glm::vec3& get_position() { return m_Position; }
+    void SetPosition(const glm::vec3& pos);
+    const glm::vec3& GetPosition() { return m_Position; }
 
-    void rotate(float angle, const glm::vec3& axis);
-    void set_rotation(float angle, const glm::vec3& axis);
-    void set_euler_angles(float pitch, float yaw, float roll);
-    const glm::quat& get_rotation() { return m_Rotation; }
+    void Translate(const glm::vec3& offset);
+    void Rotate(float angle, const glm::vec3& axis);
+    void SetRotation(float angle, const glm::vec3& axis);
+    void SetEulerAngles(float pitch, float yaw, float roll);
+    const glm::quat& GetRotation() { return m_Rotation; }
 
-    void set_scale(const glm::vec3& scale);
-    const glm::vec3& get_scale() { return m_Scale; }
+    void SetScale(const glm::vec3& scale);
+    const glm::vec3& GetScale() { return m_Scale; }
 
 private:
 	Mesh m_Mesh;

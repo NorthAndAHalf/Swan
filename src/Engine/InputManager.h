@@ -6,21 +6,21 @@ class InputManager
 {
 public:
 	InputManager(Window* w);
-	void init();
+	void Init();
 
-	void set_window(Window* w);
+	void SetWindow(Window* w);
 
-	bool get_key(int keycode);
-	bool get_mouse_button(int button);
-	std::pair<double, double> get_mouse();
-	double get_mouseX();
-	double get_mouseY();
+	bool GetKey(int keycode);
+	bool GetMouseButton(int button);
+	std::pair<double, double> GetMouse();
+	double GetMouseX();
+	double GetMouseY();
 
 private:
 	Window* mWindow;
 
-	void on_imgui_release_control(ImGuiReleaseControlEvent& e);
-	void on_imgui_take_control(ImGuiTakeControlEvent& e);
+	void OnImguiReleaseControl(ImGuiReleaseControlEvent& e);
+	void OnImguiTakeControl(ImGuiTakeControlEvent& e);
 
 	bool m_IsAcceptingInput = false;
 };

@@ -16,7 +16,7 @@ Window::Window(const char* startTitle, uint32_t startWidth, uint32_t startHeight
 	glfwWindow = nullptr;
 }
 
-void Window::init()
+void Window::Init()
 {
     glfwSetErrorCallback([](int error, const char* description) 
         {
@@ -46,22 +46,22 @@ void Window::init()
 
 	spdlog::info("Glad initialised on window: {0}", title);
 	
-	set_event_callbacks();
+	SetEventCallbacks();
 
     if (glfwRawMouseMotionSupported()) 
     {
         glfwSetInputMode(glfwWindow, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
     }
-    enable_cursor();
+    EnableCursor();
     glfwGetCursorPos(glfwWindow, &m_LastX, &m_LastY);
 }
 
-void Window::destroy()
+void Window::Destroy()
 {
     glfwDestroyWindow(glfwWindow);
 }
 
-void Window::set_event_callbacks()
+void Window::SetEventCallbacks()
 {
     glfwSetWindowSizeCallback(glfwWindow, [](GLFWwindow* window, int width, int height)
         {
@@ -69,7 +69,7 @@ void Window::set_event_callbacks()
             int frameBufferHeight;
             glfwGetFramebufferSize(window, &frameBufferWidth, &frameBufferHeight);
 
-            Engine::events().queue_event<WindowResizeEvent>(width, height, frameBufferWidth, frameBufferHeight);
+            Engine::Events().QueueEvent<WindowResizeEvent>(width, height, frameBufferWidth, frameBufferHeight);
         });
 
 	glfwSetKeyCallback(glfwWindow, [](GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -81,23 +81,23 @@ void Window::set_event_callbacks()
 			{
 			case GLFW_PRESS:
 			{
-				Engine::events().queue_event<KeyPressEvent>(key, scancode, mods);
+				Engine::Events().QueueEvent<KeyPressEvent>(key, scancode, mods);
 				break;
 			}
 			case GLFW_RELEASE:
-				Engine::events().queue_event<KeyReleaseEvent>(key, scancode, mods);
+				Engine::Events().QueueEvent<KeyReleaseEvent>(key, scancode, mods);
 				break;
 			}
 		});
 
 	glfwSetCharCallback(glfwWindow, [](GLFWwindow* window, unsigned int codePoint)
 		{
-			Engine::events().queue_event<CharEvent>(codePoint);
+			Engine::Events().QueueEvent<CharEvent>(codePoint);
 		});
 
 	glfwSetCursorPosCallback(glfwWindow, [](GLFWwindow* window, double xpos, double ypos)
 		{
-			Engine::events().queue_event<MouseMoveEvent>(xpos, ypos);
+			Engine::Events().QueueEvent<MouseMoveEvent>(xpos, ypos);
 		});
 
 	glfwSetMouseButtonCallback(glfwWindow, [](GLFWwindow* window, int button, int action, int mods)
@@ -107,34 +107,34 @@ void Window::set_event_callbacks()
 
 			if (action == GLFW_PRESS)
 			{
-				Engine::events().queue_event<MousePressEvent>(button, mods);
+				Engine::Events().QueueEvent<MousePressEvent>(button, mods);
 				return;
 			}
 			if (action == GLFW_RELEASE)
 			{
-				Engine::events().queue_event<MouseReleaseEvent>(button, mods);
+				Engine::Events().QueueEvent<MouseReleaseEvent>(button, mods);
 				return;
 			}
 		});
 
 	glfwSetScrollCallback(glfwWindow, [](GLFWwindow* window, double x_offset, double y_offset)
 		{
-			Engine::events().queue_event<MouseWheelEvent>(x_offset, y_offset);
+			Engine::Events().QueueEvent<MouseWheelEvent>(x_offset, y_offset);
 		});
 }
 
-void Window::update()
+void Window::Update()
 {
 	glfwSwapBuffers(glfwWindow);
 	glfwPollEvents();
 }
 
-void Window::set_opengl_context()
+void Window::SetOpenGLContext()
 {
 	glfwMakeContextCurrent(glfwWindow);
 }
 
-void Window::make_fullscreen()
+void Window::MakeFullscreen()
 {
 	if (!glfwWindow)
 	{
@@ -146,7 +146,7 @@ void Window::make_fullscreen()
 	isFullscreen = true;
 }
 
-void Window::make_windowed()
+void Window::MakeWindowed()
 {
 	if (!glfwWindow)
 	{
@@ -158,25 +158,25 @@ void Window::make_windowed()
 	isFullscreen = false;
 }
 
-void Window::toggle_fullscreen()
+void Window::ToggleFullscreen()
 {
 	if (isFullscreen)
-		make_windowed();
+		MakeWindowed();
 	else
-		make_fullscreen();
+		MakeFullscreen();
 }
 
-bool Window::get_key(int keycode)
+bool Window::GetKey(int keycode)
 {
 	return glfwGetKey(glfwWindow, keycode) == GLFW_PRESS;
 }
 
-bool Window::get_mouse_button(int button)
+bool Window::GetMouseButton(int button)
 {
 	return glfwGetMouseButton(glfwWindow, button);
 }
 
-void Window::get_mouse_delta(double* p_xpos, double* p_ypos)
+void Window::GetMouseDelta(double* p_xpos, double* p_ypos)
 {
     double xpos, ypos;
     glfwGetCursorPos(glfwWindow, &xpos, &ypos);
@@ -188,22 +188,22 @@ void Window::get_mouse_delta(double* p_xpos, double* p_ypos)
     m_LastY = ypos;
 }
 
-void Window::enable_cursor()
+void Window::EnableCursor()
 {
     glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 }
 
-void Window::disable_cursor()
+void Window::DisableCursor()
 {
     glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
-void Window::get_framebuffer_size(int* width, int* height)
+void Window::GetFrameBufferSize(int* width, int* height)
 {
     glfwGetFramebufferSize(glfwWindow, width, height);
 }
 
-void Window::get_content_scale(float* x, float* y)
+void Window::GetContentScale(float* x, float* y)
 {
     glfwGetWindowContentScale(glfwWindow, x, y);
 }

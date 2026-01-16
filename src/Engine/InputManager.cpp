@@ -7,65 +7,65 @@ InputManager::InputManager(Window* w)
 {
 }
 
-void InputManager::init()
+void InputManager::Init()
 {
     spdlog::info("Intialising input manager");
-    Engine::events().subscribe<ImGuiReleaseControlEvent, InputManager, &InputManager::on_imgui_release_control>(Layer::ENGINE, this);
-    Engine::events().subscribe<ImGuiTakeControlEvent, InputManager, &InputManager::on_imgui_take_control>(Layer::ENGINE, this);
+    Engine::Events().Subscribe<ImGuiReleaseControlEvent, InputManager, &InputManager::OnImguiReleaseControl>(Layer::ENGINE, this);
+    Engine::Events().Subscribe<ImGuiTakeControlEvent, InputManager, &InputManager::OnImguiTakeControl>(Layer::ENGINE, this);
 }
 
-void InputManager::set_window(Window* w)
+void InputManager::SetWindow(Window* w)
 {
     mWindow = w;
 }
 
-bool InputManager::get_key(int keycode)
+bool InputManager::GetKey(int keycode)
 {
     if (!m_IsAcceptingInput) return false;
 
-    return mWindow->get_key(keycode);
+    return mWindow->GetKey(keycode);
 }
 
-bool InputManager::get_mouse_button(int button)
+bool InputManager::GetMouseButton(int button)
 {
     if (!m_IsAcceptingInput) return false;
 
-    return mWindow->get_mouse_button(button);
+    return mWindow->GetMouseButton(button);
 }
 
-std::pair<double, double> InputManager::get_mouse()
+std::pair<double, double> InputManager::GetMouse()
 {
     if (!m_IsAcceptingInput) return std::pair<double, double>(0.0, 0.0);
 
     double xpos, ypos;
-    mWindow->get_mouse_delta(&xpos, &ypos);
+    mWindow->GetMouseDelta(&xpos, &ypos);
     return std::pair<double, double>(xpos, ypos);
 }
 
-double InputManager::get_mouseX()
+double InputManager::GetMouseX()
 {
     if (!m_IsAcceptingInput) return 0.0;
 
     double xpos, ypos;
-    mWindow->get_mouse_delta(&xpos, &ypos);
+    mWindow->GetMouseDelta(&xpos, &ypos);
     return xpos;
 }
 
-double InputManager::get_mouseY()
+double InputManager::GetMouseY()
 {
     if (!m_IsAcceptingInput) return 0.0;
 
     double xpos, ypos;
-    mWindow->get_mouse_delta(&xpos, &ypos);
+    mWindow->GetMouseDelta(&xpos, &ypos);
     return ypos;
 }
 
-void InputManager::on_imgui_release_control(ImGuiReleaseControlEvent& e)
+void InputManager::OnImguiReleaseControl(ImGuiReleaseControlEvent& e)
 {
     m_IsAcceptingInput = true;
 }
 
-void InputManager::on_imgui_take_control(ImGuiTakeControlEvent& e)
+void InputManager::OnImguiTakeControl(ImGuiTakeControlEvent& e)
 {
     m_IsAcceptingInput = false;
 }

@@ -7,24 +7,24 @@ GameService::GameService()
 {
 }
 
-void GameService::init()
+void GameService::Init()
 {
-	Engine::events().subscribe_global<UpdateEvent, GameService, &GameService::on_update>(this);
-	Engine::events().subscribe<KeyPressEvent, GameService, &GameService::on_key_press_event>(Layer::GAME, this);
-	Engine::events().subscribe_global<MousePressEvent, GameService, &GameService::on_mouse_press_event>(this);
+	Engine::Events().SubscribeGlobal<UpdateEvent, GameService, &GameService::OnUpdate>(this);
+	Engine::Events().Subscribe<KeyPressEvent, GameService, &GameService::OnKeyPress>(Layer::GAME, this);
+	Engine::Events().SubscribeGlobal<MousePressEvent, GameService, &GameService::OnMousePress>(this);
 }
 
-void GameService::on_update(UpdateEvent& e)
+void GameService::OnUpdate(UpdateEvent& e)
 {
-	if (Engine::input().get_key(SF_KEY_A))
+	if (Engine::Input().GetKey(SF_KEY_A))
 	{
-		double xpos = Engine::input().get_mouseX();
-		double ypos = Engine::input().get_mouseY();
+		double xpos = Engine::Input().GetMouseX();
+		double ypos = Engine::Input().GetMouseY();
 		spdlog::trace("Mouse Position: X = {0}, Y = {1}", xpos, ypos);
 	}
 }
 
-void GameService::on_key_press_event(KeyPressEvent& e)
+void GameService::OnKeyPress(KeyPressEvent& e)
 {
 	if (e.keycode == SF_KEY_SPACE)
 	{
@@ -32,7 +32,7 @@ void GameService::on_key_press_event(KeyPressEvent& e)
 	}
 }
 
-void GameService::on_mouse_press_event(MousePressEvent& e)
+void GameService::OnMousePress(MousePressEvent& e)
 {
 	spdlog::info(e.button);
 }

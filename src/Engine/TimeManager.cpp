@@ -2,23 +2,23 @@
 #include "GLFW/glfw3.h"
 
 TimeManager::TimeManager()
-	: currentFrameTime(0), lastFrameTime(0)
+	: m_CurrentFrameTime(0), m_LastFrameTime(0)
 {
 }
 
-void TimeManager::update_time()
+void TimeManager::UpdateTime()
 {
-	currentFrameTime = lastFrameTime;
-	lastFrameTime = glfwGetTime();
+	m_CurrentFrameTime = m_LastFrameTime;
+	m_LastFrameTime = glfwGetTime();
 }
 
 // TODO: Implement moving average calculation
-double TimeManager::get_delta_time()
+double TimeManager::GetDeltaTime()
 {
-	return currentFrameTime - lastFrameTime;
+	return m_CurrentFrameTime - m_LastFrameTime;
 }
 
-double TimeManager::get_time()
+double TimeManager::GetTime()
 {
 	return glfwGetTime();
 }

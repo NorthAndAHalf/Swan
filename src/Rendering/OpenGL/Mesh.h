@@ -14,17 +14,17 @@ class Mesh
 public:
 	Mesh(Vertex* vertexPtr, uint32_t vertexCount, uint32_t* indexPtr, uint32_t indexCount);
 
-	void set_vertices(Vertex* ptr);
-	Vertex* get_vertices();
+	void SetVertices(Vertex* ptr);
+	Vertex* GetVertices();
 
-	void set_vertex_count(uint32_t count);
-	uint32_t get_vertex_count();
+	void SetVertexCount(uint32_t count);
+	uint32_t GetVertexCount();
 
-	void set_indices(uint32_t* ptr); // All indices are 32 bit for now, but could change in the future to be adaptive based on Mesh size
-	uint32_t* get_indices();
+	void SetIndices(uint32_t* ptr); // All indices are 32 bit for now, but could change in the future to be adaptive based on Mesh size
+	uint32_t* GetIndices();
 
-	void set_index_count(uint32_t count);
-	uint32_t get_index_count();
+	void SetIndexCount(uint32_t count);
+	uint32_t GetIndexCount();
 
 private:
 	Vertex* m_Vertices;

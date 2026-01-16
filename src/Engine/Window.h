@@ -8,51 +8,51 @@ class Window
 public:
 	Window(const char* startTitle, uint32_t startWidth, uint32_t startHeight, bool startFullscreen);
 
-	void init();
-	void destroy();
-	void update();
+	void Init();
+	void Destroy();
+	void Update();
 
-	void set_opengl_context();
+	void SetOpenGLContext();
 
-	void set_title(const char* newTitle) { title = newTitle; }
-	const char* get_title() { return title; }
+	void SetTitle(const char* newTitle) { title = newTitle; }
+	const char* GetTitle() { return title; }
 
-	void set_height(uint32_t newHeight) { 
+	void SetHeight(uint32_t newHeight) { 
 		height = newHeight; 
 	}
 
-	uint32_t get_height() { 
+	uint32_t GetHeight() { 
 		return (isFullscreen) ? fullscreenHeight : height;
 	}
 
-	void set_width(uint32_t newWidth) { 
+	void SetWidth(uint32_t newWidth) { 
 		width = newWidth; 
 	}
 
-	uint32_t get_width() { 
+	uint32_t GetWidth() { 
 		return (isFullscreen) ? fullscreenWidth : width; 
 	}
 
-	void enable_cursor();
-	void disable_cursor();
+	void EnableCursor();
+	void DisableCursor();
 
-	void get_framebuffer_size(int* width, int* height);
-	void get_content_scale(float* x, float* y);
+	void GetFrameBufferSize(int* width, int* height);
+	void GetContentScale(float* x, float* y);
 
-	void set_fullscreen_height(uint32_t height) { fullscreenHeight = height; }
-	void set_fullscreen_width(uint32_t width) { fullscreenWidth = width;  }
+	void SetFullscreenHeight(uint32_t height) { fullscreenHeight = height; }
+	void SetFullscreenWidth(uint32_t width) { fullscreenWidth = width;  }
 
-	bool is_fullscreen() { return isFullscreen; }
-	void make_fullscreen();
-	void make_windowed();
-	void toggle_fullscreen();
+	bool IsFullscreen() { return isFullscreen; }
+	void MakeFullscreen();
+	void MakeWindowed();
+	void ToggleFullscreen();
 
-	bool window_should_close() { return glfwWindowShouldClose(glfwWindow); }
+	bool WindowShouldClose() { return glfwWindowShouldClose(glfwWindow); }
 
 	// Input Polling
-	bool get_key(int keycode);
-	bool get_mouse_button(int button);
-	void get_mouse_delta(double* xpos, double* ypos);
+	bool GetKey(int keycode);
+	bool GetMouseButton(int button);
+	void GetMouseDelta(double* xpos, double* ypos);
 
 private:
 	const char* title;
@@ -69,7 +69,7 @@ private:
 	double m_LastX;
 	double m_LastY;
 
-	void set_event_callbacks();
+	void SetEventCallbacks();
 };
 
 namespace GLFWHelpers {

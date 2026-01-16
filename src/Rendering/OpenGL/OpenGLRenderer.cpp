@@ -9,19 +9,19 @@ OpenGLRenderer::OpenGLRenderer()
 
 }
 
-void OpenGLRenderer::init()
+void OpenGLRenderer::Init()
 {
 	glClearColor(0.0, 1.0, 0.0, 1.0);
 
 
 }
 
-void OpenGLRenderer::update()
+void OpenGLRenderer::Update()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void OpenGLRenderer::swap_buffers()
+void OpenGLRenderer::SwapBuffers()
 {
 	
 }

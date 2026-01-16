@@ -9,24 +9,24 @@ class ImGuiService
 public:
 	ImGuiService();
 
-	void init();
+	void Init();
 	
-	void shutdown();
+	void Shutdown();
 
 private:
-	void on_update(UpdateEvent& e);
-	void on_window_resize(WindowResizeEvent& e);
-	void update_key_modifiers(int mods);
-	void on_key_press(KeyPressEvent& e);
-	void on_key_release(KeyReleaseEvent& e);
-	void on_char_input(CharEvent& e);
-	void on_mouse_press(MousePressEvent& e);
-	void on_mouse_release(MouseReleaseEvent& e);
-	void on_mouse_wheel(MouseWheelEvent& e);
-	void on_mouse_move(MouseMoveEvent& e);
+	void OnUpdate(UpdateEvent& e);
+	void OnWindowResize(WindowResizeEvent& e);
+	void UpdateKeyModifiers(int mods);
+	void OnKeyPress(KeyPressEvent& e);
+	void OnKeyRelease(KeyReleaseEvent& e);
+	void OnCharInput(CharEvent& e);
+	void OnMousePress(MousePressEvent& e);
+	void OnMouseRelease(MouseReleaseEvent& e);
+	void OnMouseWheel(MouseWheelEvent& e);
+	void OnMouseMove(MouseMoveEvent& e);
     
-	void release_user_control();
-	void take_user_control();
+	void ReleaseUserControl();
+	void TakeUserControl();
 	bool m_HasUserControl;
 
     ImGuiIO* m_Io;

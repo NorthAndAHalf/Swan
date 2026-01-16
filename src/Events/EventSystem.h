@@ -26,7 +26,7 @@ class TypeIdentifier
 {
 public:
     template<typename T>
-    static uint32_t get_id() {
+    static uint32_t GetId() {
         static const uint32_t id = m_Counter++;
         return id;
     }
@@ -47,14 +47,14 @@ struct EventDelegate
 class DelegateBucket 
 {
 public:
-    void add_delegate(uint32_t type, EventDelegate d)
+    void AddDelegate(uint32_t type, EventDelegate d)
     {
         m_Pool[type].push_back(d);
     }
 
-    void propagate_event(Event& e)
+    void PropagateEvent(Event& e)
     {
-        for (EventDelegate& delegate : m_Pool[e.get_type_id()])
+        for (EventDelegate& delegate : m_Pool[e.GetTypeId()])
         {
             delegate(e);
         }
@@ -66,7 +66,7 @@ private:
 
 class EventSystem {
 public:
-    void init()
+    void Init()
     {
         spdlog::info("Allocating event buffers");
 
@@ -90,7 +90,7 @@ public:
     // --- Event Dispatching ---
 
     template<typename T, typename... Args>
-    void queue_event(Args&&... args) 
+    void QueueEvent(Args&&... args) 
     {
         if (m_InputQueueHead >= EVENT_QUEUE_COUNT)
         {
@@ -106,49 +106,49 @@ public:
         }
 
         T* e = new (address) T(std::forward<Args>(args)...);
-        e->typeId = TypeIdentifier::get_id<T>();
+        e->typeId = TypeIdentifier::GetId<T>();
         m_InputQueue[m_InputQueueHead] = e;
         m_InputQueueHead++;
     }
 
     template<typename T, typename... Args>
-    void fire_event(Args&&... args) 
+    void FireEvent(Args&&... args) 
     {
         T e = T(std::forward<Args>(args)...);
-        e.typeId = TypeIdentifier::get_id<T>();
-        notify_subscribers(e);
+        e.typeId = TypeIdentifier::GetId<T>();
+        NotifySubscribers(e);
     }
 
-    void dispatch_queued_events() 
+    void DispatchQueuedEvents() 
     {
-        swap_queues();
+        SwapQueues();
         for (unsigned int i = 0; i < m_DispatchQueueHead; i++)
         {
             Event* e = m_DispatchQueue[i];
-            notify_subscribers(*e);
+            NotifySubscribers(*e);
             e->~Event();
         }
-        clear_dispatch_queue();
+        ClearDispatchQueue();
     }
 
 private:
-    void notify_subscribers(Event& e)
+    void NotifySubscribers(Event& e)
     {
         for (DelegateBucket& bucket : m_LayerBuckets) 
         {
-            bucket.propagate_event(e);
+            bucket.PropagateEvent(e);
             if (e.handled) break;
         }
-        m_GlobalBucket.propagate_event(e);
+        m_GlobalBucket.PropagateEvent(e);
     }
 
 public:
     // --- Subscribers ---
 
     template<typename T, typename Obj, void (Obj::* Func)(T&)>
-    void subscribe(Layer layer, Obj* instance) {
+    void Subscribe(Layer layer, Obj* instance) {
         static_assert(std::is_base_of_v<Event, T>, "T must derive from Event");
-        uint32_t id = TypeIdentifier::get_id<T>();
+        uint32_t id = TypeIdentifier::GetId<T>();
 
         EventDelegate delegate;
         delegate.instance = instance;
@@ -156,13 +156,13 @@ public:
             (static_cast<Obj*>(inst)->*Func)(static_cast<T&>(e));
             };
 
-        m_LayerBuckets[static_cast<size_t>(layer)].add_delegate(id, delegate);
+        m_LayerBuckets[static_cast<size_t>(layer)].AddDelegate(id, delegate);
     }
 
     template<typename T, typename Obj, void (Obj::* Func)(T&)>
-    void subscribe_global(Obj* instance) {
+    void SubscribeGlobal(Obj* instance) {
         static_assert(std::is_base_of_v<Event, T>, "T must derive from Event");
-        uint32_t id = TypeIdentifier::get_id<T>();
+        uint32_t id = TypeIdentifier::GetId<T>();
 
         EventDelegate delegate;
         delegate.instance = instance;
@@ -170,29 +170,29 @@ public:
             (static_cast<Obj*>(inst)->*Func)(static_cast<T&>(e));
             };
 
-        m_GlobalBucket.add_delegate(id, delegate);
+        m_GlobalBucket.AddDelegate(id, delegate);
     }
 
     template<typename T, void (*func)(T&)>
-    void subscribe_static(Layer layer)
+    void SubscribeStatic(Layer layer)
     {
         static_assert(std::is_base_of_v<Event, T>, "T must derive from Event");
-        uint32_t id = TypeIdentifier::get_id<T>();
+        uint32_t id = TypeIdentifier::GetId<T>();
         EventDelegate delegate;
         delegate.instance = nullptr; // Passed to the stub, but not used in the lambda defined below
         delegate.stub = [](void*, Event& e) { func(static_cast<T&>(e)); };
-        m_LayerBuckets[static_cast<size_t>(layer)].add_delegate(id, delegate);
+        m_LayerBuckets[static_cast<size_t>(layer)].AddDelegate(id, delegate);
     }
 
     template<typename T, void (*func)(T&)>
-    void subscribe_static_global()
+    void SubscribeStaticGlobal()
     {
         static_assert(std::is_base_of_v<Event, T>, "T must derive from Event");
-        uint32_t id = TypeIdentifier::get_id<T>();
+        uint32_t id = TypeIdentifier::GetId<T>();
         EventDelegate delegate;
         delegate.instance = nullptr; // Passed to the stub, but not used in the lambda defined below
         delegate.stub = [](void*, Event& e) { func(static_cast<T&>(e)); };
-        m_GlobalBucket.add_delegate(id, delegate);
+        m_GlobalBucket.AddDelegate(id, delegate);
     }
 
 private:
@@ -213,7 +213,7 @@ private:
     Event** m_DispatchQueue;  
     LinearBuffer* m_DispatchBuffer;
 
-    void swap_queues()
+    void SwapQueues()
     {
         Event** newInputQueue = m_DispatchQueue;
         Event** newDispatchQueue = m_InputQueue;
@@ -231,7 +231,7 @@ private:
         m_InputQueueHead = 0; // Dispatch queue should always be 0 when queues are swapped
     }
 
-    void clear_dispatch_queue()
+    void ClearDispatchQueue()
     {
         m_DispatchQueueHead = 0;
         m_DispatchBuffer->reset();
