@@ -1,7 +1,7 @@
 #include "Engine.h"
 #include "spdlog/spdlog.h"
 #include <stdexcept>
-#include "Rendering/OpenGLRenderer.h"
+#include "Rendering/OpenGL/OpenGLRenderer.h"
 
 std::unique_ptr<EventSystem> Engine::eventsystem = nullptr;
 std::unique_ptr<Window> Engine::primaryWindow = nullptr;

@@ -8,7 +8,7 @@
 #include "Engine/InputManager.h"
 #include "Engine/TimeManager.h"
 
-#include "Rendering/OpenGLRenderer.h"
+#include "Rendering/OpenGL/OpenGLRenderer.h"
 
 class Engine
 {
