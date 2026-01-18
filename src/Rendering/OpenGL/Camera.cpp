@@ -15,7 +15,7 @@ const glm::mat4& Camera::GetVPMatrix()
 	{
 		CalculateProjectionMatrix();
 	}
-	CalculateProjectionMatrix();
+	CalculateViewMatrix();
 
 	return m_ProjectionMatrix * m_ViewMatrix;
 }
