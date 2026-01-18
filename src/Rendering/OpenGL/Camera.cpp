@@ -20,6 +20,21 @@ const glm::mat4& Camera::GetVPMatrix()
 	return m_ProjectionMatrix * m_ViewMatrix;
 }
 
+glm::vec3 Camera::GetUp()
+{
+	return glm::normalize(m_Rotation * glm::vec3(0.0f, 1.0f, 0.0f));
+}
+
+glm::vec3 Camera::GetForward()
+{
+	return glm::normalize(m_Rotation * glm::vec3(0.0f, 0.0f, -1.0f));
+}
+
+glm::vec3 Camera::GetRight()
+{
+	return glm::normalize(m_Rotation * glm::vec3(1.0f, 0.0f, 0.0f));
+}
+
 void Camera::CalculateViewMatrix()
 {
 	glm::mat4 transform = glm::translate(glm::mat4(1.0f), m_Position);
@@ -38,8 +53,6 @@ void Camera::SetPosition(const glm::vec3& pos)
 	m_Position = pos;
 	m_CacheDirty = true;
 }
-
-
 
 void Camera::Translate(const glm::vec3& offset)
 {

@@ -11,6 +11,10 @@ public:
 
 	const glm::mat4& GetVPMatrix();
 
+	glm::vec3 GetUp();
+	glm::vec3 GetForward();
+	glm::vec3 GetRight();
+
 	void SetPosition(const glm::vec3& pos);
 	const glm::vec3& GetPosition() { return m_Position; }
 
