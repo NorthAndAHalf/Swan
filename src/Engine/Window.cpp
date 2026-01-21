@@ -1,4 +1,3 @@
-#include "glad/glad.h"
 #include "Window.h"
 #include "spdlog/spdlog.h"
 #include <stdexcept>
@@ -23,6 +22,10 @@ void Window::Init()
         spdlog::error("GLFW Error {}: {}", error, description);
         });
 
+#ifdef SF_DEBUG
+    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
+#endif
+
 	if (isFullscreen)
 	{
 		glfwWindow = glfwCreateWindow(fullscreenWidth, fullscreenHeight, title, glfwGetPrimaryMonitor(), NULL);
@@ -43,6 +46,36 @@ void Window::Init()
 		glfwTerminate();
 		throw std::runtime_error("Failed to initialise glad");
 	}
+
+#ifdef SF_DEBUG
+
+    int flags;
+    glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
+    if (flags & GL_CONTEXT_FLAG_DEBUG_BIT)
+    {
+        glEnable(GL_DEBUG_OUTPUT);
+        glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS); // Makes sure errors print immediately
+        glDebugMessageCallback([](GLenum source, GLenum type, unsigned int id, GLenum severity,
+            GLsizei length, const char* message, const void* userParam)
+            {
+                // Ignore non-significant error/warning codes
+                if (id == 131185 || id == 131218 || id == 131204 || id == 1282) return;
+
+                std::string sourceStr, typeStr, severityStr;
+
+                switch (severity) {
+                case GL_DEBUG_SEVERITY_HIGH:         severityStr = "HIGH"; break;
+                case GL_DEBUG_SEVERITY_MEDIUM:       severityStr = "MEDIUM"; break;
+                case GL_DEBUG_SEVERITY_LOW:          severityStr = "LOW"; break;
+                case GL_DEBUG_SEVERITY_NOTIFICATION: severityStr = "NOTIFICATION"; break;
+                }
+
+                spdlog::error("OpenGL Error [{}] ({}): {}", severityStr, id, message);
+            }, nullptr);
+        glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
+        spdlog::info("OpenGL Debug Output Enabled.");
+    }
+#endif
 
 	spdlog::info("Glad initialised on window: {0}", title);
 	

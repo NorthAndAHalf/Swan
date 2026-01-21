@@ -1,6 +1,7 @@
 #pragma once
 #include "Core.h"
 #include <mutex>
+#include "Rendering/OpenGL/OpenGLRenderer.h"
 #include "Events/EventSystem.h"
 #include "Window.h"
 #include <memory>
@@ -8,7 +9,6 @@
 #include "Engine/InputManager.h"
 #include "Engine/TimeManager.h"
 
-#include "Rendering/OpenGL/OpenGLRenderer.h"
 
 class Engine
 {

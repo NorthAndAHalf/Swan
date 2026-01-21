@@ -1,5 +1,7 @@
 #include "ImGuiService.h"
 
+#include "glad/glad.h"
+
 #include "imgui/imgui.h"
 #include "imgui/backends/imgui_impl_opengl3.h"
 

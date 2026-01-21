@@ -1,5 +1,7 @@
 #pragma once
 
+#include "OpenGLRendererCore.h"
+#include "ShaderProgram.h"
 #include "Memory/LinearBuffer.h"
 
 class OpenGLRenderer
@@ -7,10 +9,12 @@ class OpenGLRenderer
 public:
 	OpenGLRenderer();
 	void Init();
-
-	void SwapBuffers();
 	void Update();
 private:
-	LinearBuffer m_VertexPool;
-	LinearBuffer m_IndexPool;
+	LinearBuffer m_vertexPool;
+	LinearBuffer m_indexPool;
+
+	ScreenQuad m_quad;
+
+	ShaderProgram m_shaderProgram;
 };

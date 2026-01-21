@@ -1,7 +1,6 @@
 #include "Engine.h"
 #include "spdlog/spdlog.h"
 #include <stdexcept>
-#include "Rendering/OpenGL/OpenGLRenderer.h"
 
 std::unique_ptr<EventSystem> Engine::eventsystem = nullptr;
 std::unique_ptr<Window> Engine::primaryWindow = nullptr;
@@ -58,7 +57,6 @@ void Engine::MainLoop()
 {
     while (!primaryWindow->WindowShouldClose())
     {
-        m_Renderer->SwapBuffers();
         eventsystem->DispatchQueuedEvents();
         m_Renderer->Update();
         eventsystem->FireEvent<UpdateEvent>();
