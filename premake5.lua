@@ -1,18 +1,29 @@
 local ROOT = ""
+local SourceDir = ROOT .. "src/"
 
 workspace "Snowfall"
     configurations { "Debug", "Release" }
+    platforms { "x64" }
 
 project "Snowfall"
     kind "ConsoleApp"
     language "C++"
     cppdialect "C++23"
-    targetdir "bin/%{cfg.buildcfg}"
+    staticruntime "off"
+    
+    targetdir ("bin/%{cfg.buildcfg}")
+    objdir ("bin-int/%{cfg.buildcfg}")
     targetname "Snowfall"
     architecture "x64"
-    local SourceDir = ROOT .. "src/";
 
-    buildoptions  { "/utf-8" }
+    buildoptions { "/utf-8" }
+
+    defines 
+    { 
+        "GLFW_INCLUDE_NONE",            -- Fixes GLFW conflicts
+        "IMGUI_IMPL_OPENGL_LOADER_GLAD", -- Fixes ImGui conflicts
+        "WIN32_LEAN_AND_MEAN"           -- Fixes Windows.h conflicts
+    }
 
     files 
     { 
@@ -27,7 +38,7 @@ project "Snowfall"
         "vendor/imgui/imgui/misc/debuggers/imgui.natvis",
         "vendor/imgui/imgui/misc/debuggers/imgui.natstepfilter",
         "vendor/imgui/imgui/misc/cpp/imgui_stdlib.*"
-     }
+    }
 
     includedirs 
     { 
@@ -41,32 +52,41 @@ project "Snowfall"
         "vendor/imgui",
         "vendor/imgui/imgui"
     }
-    libdirs 
-    { 
-        "vendor/glfw",
-        "vendor/glad",
-        "vendor/glm",
-        "vendor/spdlog",
-        "vendor/stbimage",
-        "vendor/assimp/include"
-    }
+
+    -- Common Libraries
     links 
     { 
-        "vendor/glfw/lib-vc2022/glfw3.lib",
         "opengl32.lib",
-        "vendor/assimp/lib/Debug/assimp-vc145-mtd.lib"
+        "vendor/glfw/lib-vc2022/glfw3.lib"
     }
 
-    postbuildcommands {
-        -- Copy Assimp DLLs to the output directory after build
-        "{COPY} vendor/assimp/%{cfg.targetdir}/*.dll %{cfg.targetdir}"
-    }
-    
-
+    -- Configuration specific logic
     filter "configurations:Debug"
         defines { "SF_DEBUG" }
+        runtime "Debug"
         symbols "On"
+
+        -- Link Debug version of Assimp
+        links { "vendor/assimp/lib/Debug/assimp-vc143-mtd.lib" }
+
+        -- Copy Debug DLLs and Assets
+        postbuildcommands {
+            "{COPY} \"vendor/assimp/lib/Debug/*.dll\" \"%{cfg.targetdir}\"",
+            "{COPYDIR} \"assets\" \"%{cfg.targetdir}/assets\""
+        }
 
     filter "configurations:Release"
         defines { "SF_NDEBUG" }
+        runtime "Release"
         optimize "On"
+
+        -- Link Release version of Assimp
+        links { "vendor/assimp/lib/Release/assimp-vc145.lib" }
+
+        -- Copy Release DLLs and Assets
+        postbuildcommands {
+            "{COPY} \"vendor/assimp/lib/Release/*.dll\" \"%{cfg.targetdir}\"",
+            "{COPYDIR} \"assets\" \"%{cfg.targetdir}/assets\""
+        }
+
+    filter "{}" -- Reset filter
