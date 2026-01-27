@@ -1,49 +1,93 @@
 #include "OpenGLRenderer.h"
 #include "Rendering/OpenGL/Mesh.h"
+#include "spdlog/spdlog.h"
+#include "Passes/TestPasses.h"
 
 // Allocate space for ten million vertices, 50 million indices
-OpenGLRenderer::OpenGLRenderer()
-	: m_vertexPool(LinearBuffer(sizeof(Vertex) * 10000000)), 
-	  m_indexPool(LinearBuffer(sizeof(uint32_t) * 50000000)),
+OpenGLRenderer::OpenGLRenderer(uint32_t viewportWidth, uint32_t viewportHeight)
+	: m_viewportWidth(viewportWidth), m_viewportHeight(viewportHeight),
+	m_vertexPool(LinearBuffer(sizeof(Vertex) * 10000000)),
+	m_indexPool(LinearBuffer(sizeof(uint32_t) * 50000000)),
+	m_framebuffer1(Framebuffer("FB1", viewportWidth, viewportHeight, true, false)),
+	m_framebuffer2(Framebuffer("FB1", viewportWidth, viewportHeight, true, false))
+{
+	m_writeFramebuffer = &m_framebuffer1;
+	m_readFramebuffer = &m_framebuffer2;
 
-	  m_shaderProgram(ShaderProgram(
+	m_shaders.emplace_back(std::make_unique<ShaderProgram>(
 		"Screen Quad",
 		"assets/shaders/glsl/vert_Quad.glsl",
-		"assets/shaders/glsl/frag_QuadSolid.glsl"))
-{
+		"assets/shaders/glsl/frag_QuadSolid.glsl"));
+
+	m_shaders.emplace_back(std::make_unique<ShaderProgram>(
+		"Screen Quad",
+		"assets/shaders/glsl/vert_Quad.glsl",
+		"assets/shaders/glsl/frag_QuadInverse.glsl"));
+
+	m_shaders.emplace_back(std::make_unique<ShaderProgram>(
+		"Textured Quad",
+		"assets/shaders/glsl/vert_Quad.glsl",
+		"assets/shaders/glsl/frag_QuadTexture.glsl"));
 }
 
 void OpenGLRenderer::Init()
 {
+	CompileShaders();
+
 	glClearColor(1.0, 0.0, 1.0, 1.0);
 	glEnable(GL_CULL_FACE);
-
-	glGenVertexArrays(1, &m_quad.vao);
-	glBindVertexArray(m_quad.vao);
-
-	glGenBuffers(1, &m_quad.vbo);
-	glGenBuffers(1, &m_quad.ibo);
-
-	glBindBuffer(GL_ARRAY_BUFFER, m_quad.vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(m_quad.vertices), m_quad.vertices, GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_quad.ibo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(m_quad.indices), m_quad.indices, GL_STATIC_DRAW);
-
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0); // Position
-	glEnableVertexAttribArray(0);
-
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float))); // UV
-	glEnableVertexAttribArray(1);
+	m_quad.Init();
 }
 
 void OpenGLRenderer::Update()
 {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	m_shaderProgram.Use();
-	glBindVertexArray(m_quad.vao);
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	m_quad.BindVAO();
+	TestPass(m_quad, *m_writeFramebuffer, *m_shaders[0]);
+	SwapFramebuffers();
+	TestInversePass(m_quad, *m_readFramebuffer, *m_writeFramebuffer, *m_shaders[1]);
+	SwapFramebuffers();
+	m_quad.DrawToScreen(*m_shaders[2], (*m_readFramebuffer).GetColorTexture());
 	glBindVertexArray(0);
+}
+
+bool OpenGLRenderer::CompileShaders()
+{
+	spdlog::info("Compiling Shaders");
+	for (auto&& shader : m_shaders)
+	{
+		bool success = shader->Compile();
+		if (!success)
+			return false;
+	}
+	return true;
+}
+
+void OpenGLRenderer::SwapFramebuffers()
+{
+	Framebuffer* new_read = m_writeFramebuffer;
+	Framebuffer* new_write = m_readFramebuffer;
+
+	m_writeFramebuffer = new_write;
+	m_readFramebuffer = new_read;
+}
+
+uint32_t OpenGLRenderer::GetViewportWidth()
+{
+	return m_viewportWidth;
+}
+
+void OpenGLRenderer::SetViewportWidth(uint32_t w)
+{
+	m_viewportWidth = w;
+}
+
+uint32_t OpenGLRenderer::GetViewportHeight()
+{
+	return m_viewportHeight;
+}
+
+void OpenGLRenderer::SetViewportHeight(uint32_t h)
+{
+	m_viewportHeight = h;
 }
 

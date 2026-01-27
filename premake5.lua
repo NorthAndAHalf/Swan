@@ -67,7 +67,7 @@ project "Snowfall"
         symbols "On"
 
         -- Link Debug version of Assimp
-        links { "vendor/assimp/lib/Debug/assimp-vc143-mtd.lib" }
+        links { "vendor/assimp/lib/Debug/assimp-vc145-mtd.lib" }
 
         -- Copy Debug DLLs and Assets
         postbuildcommands {

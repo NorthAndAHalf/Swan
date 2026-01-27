@@ -34,6 +34,5 @@ void GameService::OnKeyPress(KeyPressEvent& e)
 
 void GameService::OnMousePress(MousePressEvent& e)
 {
-	spdlog::info(e.button);
 }
 

@@ -1,6 +1,8 @@
 #pragma once
-
 #include <cstdint>
+#include "ShaderProgram.h"
+#include "Framebuffer.h"
+#include "Rendering/OpenGL/Texture.h"
 
 struct ScreenQuad
 {
@@ -24,4 +26,9 @@ struct ScreenQuad
 		0, 3, 2,
 		2, 1, 0
 	};
+
+	void Init();
+	void BindVAO();
+	void DrawToScreen(ShaderProgram& shader, uint32_t textureId);
+	void DrawToFramebuffer(ShaderProgram& shader, Framebuffer& fb);
 };

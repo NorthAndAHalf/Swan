@@ -7,9 +7,7 @@
 #define SF_ASSERT(x, msg)
 #endif
 
-
 // Key Code Macros - Values from GLFW
-/* The unknown key */
 #define SF_KEY_UNKNOWN            -1
 
 /* Printable keys */

@@ -59,7 +59,7 @@ void Window::Init()
             GLsizei length, const char* message, const void* userParam)
             {
                 // Ignore non-significant error/warning codes
-                if (id == 131185 || id == 131218 || id == 131204 || id == 1282) return;
+                if (id == 131185 || id == 131218 || id == 131204 || id == 1282 || id == 131169) return;
 
                 std::string sourceStr, typeStr, severityStr;
 
@@ -70,7 +70,10 @@ void Window::Init()
                 case GL_DEBUG_SEVERITY_NOTIFICATION: severityStr = "NOTIFICATION"; break;
                 }
 
-                spdlog::error("OpenGL Error [{}] ({}): {}", severityStr, id, message);
+                if (severity == GL_DEBUG_SEVERITY_HIGH || severity == GL_DEBUG_SEVERITY_MEDIUM)
+                    spdlog::error("OpenGL Error [{}] ({}): {}", severityStr, id, message);
+                else
+                    spdlog::warn("OpenGL Error [{}] ({}): {}", severityStr, id, message);
             }, nullptr);
         glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
         spdlog::info("OpenGL Debug Output Enabled.");

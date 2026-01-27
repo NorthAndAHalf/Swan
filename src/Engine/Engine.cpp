@@ -40,7 +40,7 @@ void Engine::Init()
 
     timeManager = std::make_unique<TimeManager>();
 
-    m_Renderer = std::make_unique<OpenGLRenderer>();
+    m_Renderer = std::make_unique<OpenGLRenderer>(1920, 1080);
     m_Renderer->Init();
 
     spdlog::info("Engine initialised successfully");

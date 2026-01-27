@@ -16,9 +16,6 @@ ShaderProgram::ShaderProgram(std::string name, const char* vertPath, const char*
 
 	glShaderSource(m_vertexShader, 1, &vertSrc, NULL);
 	glShaderSource(m_fragmentShader, 1, &fragSrc, NULL);
-
-	Compile();
-	Link();
 }
 
 bool ShaderProgram::Compile()
@@ -26,7 +23,7 @@ bool ShaderProgram::Compile()
 	glCompileShader(m_vertexShader);
 	glCompileShader(m_fragmentShader);
 
-	bool success = true;
+	bool success = true; 
 
 	int vertSuccess;
 	char vertInfoLog[512];
@@ -48,7 +45,8 @@ bool ShaderProgram::Compile()
 		spdlog::error("Fragment shader compilation error ({0}): {1}", m_name, fragInfoLog);
 		success = false;
 	}
-	return success;
+	bool linkSuccess = Link();
+	return success && linkSuccess;
 }
 
 bool ShaderProgram::Link()
