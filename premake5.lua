@@ -20,9 +20,9 @@ project "Snowfall"
 
     defines 
     { 
-        "GLFW_INCLUDE_NONE",            -- Fixes GLFW conflicts
-        "IMGUI_IMPL_OPENGL_LOADER_GLAD", -- Fixes ImGui conflicts
-        "WIN32_LEAN_AND_MEAN"           -- Fixes Windows.h conflicts
+        "GLFW_INCLUDE_NONE",
+        "IMGUI_IMPL_OPENGL_LOADER_GLAD",
+        "WIN32_LEAN_AND_MEAN"
     }
 
     files 
@@ -53,25 +53,21 @@ project "Snowfall"
         "vendor/imgui/imgui"
     }
 
-    -- Common Libraries
     links 
     { 
         "opengl32.lib",
         "vendor/glfw/lib-vc2022/glfw3.lib"
     }
 
-    -- Configuration specific logic
     filter "configurations:Debug"
         defines { "SF_DEBUG" }
         runtime "Debug"
         symbols "On"
 
-        -- Link Debug version of Assimp
-        links { "vendor/assimp/lib/Debug/assimp-vc145-mtd.lib" }
+        links { "libs/assimp/Debug/assimp-vc145-mtd.lib" }
 
-        -- Copy Debug DLLs and Assets
         postbuildcommands {
-            "{COPY} \"vendor/assimp/lib/Debug/*.dll\" \"%{cfg.targetdir}\"",
+            "{COPY} \"libs/assimp/Debug/*.dll\" \"%{cfg.targetdir}\"",
             "{COPYDIR} \"assets\" \"%{cfg.targetdir}/assets\""
         }
 
@@ -80,13 +76,11 @@ project "Snowfall"
         runtime "Release"
         optimize "On"
 
-        -- Link Release version of Assimp
-        links { "vendor/assimp/lib/Release/assimp-vc145.lib" }
+        links { "libs/assimp/Release/assimp-vc145-mt.lib" }
 
-        -- Copy Release DLLs and Assets
         postbuildcommands {
-            "{COPY} \"vendor/assimp/lib/Release/*.dll\" \"%{cfg.targetdir}\"",
+            "{COPY} \"libs/assimp/Release/*.dll\" \"%{cfg.targetdir}\"",
             "{COPYDIR} \"assets\" \"%{cfg.targetdir}/assets\""
         }
 
-    filter "{}" -- Reset filter
+    filter "{}"

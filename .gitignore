@@ -2,7 +2,9 @@
 bin/
 bin-int/
 obj/
+libs/
 *.sln
+**.slnx
 *.vcxproj
 *.filters
 *.user
