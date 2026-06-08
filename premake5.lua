@@ -1,11 +1,11 @@
 local ROOT = ""
 local SourceDir = ROOT .. "src/"
 
-workspace "Snowfall"
+workspace "Swan"
     configurations { "Debug", "Release" }
     platforms { "x64" }
 
-project "Snowfall"
+project "Swan"
     kind "ConsoleApp"
     language "C++"
     cppdialect "C++23"
@@ -13,7 +13,7 @@ project "Snowfall"
     
     targetdir ("bin/%{cfg.buildcfg}")
     objdir ("bin-int/%{cfg.buildcfg}")
-    targetname "Snowfall"
+    targetname "Swan"
     architecture "x64"
 
     buildoptions { "/utf-8" }
@@ -60,7 +60,7 @@ project "Snowfall"
     }
 
     filter "configurations:Debug"
-        defines { "SF_DEBUG" }
+        defines { "SW_DEBUG" }
         runtime "Debug"
         symbols "On"
 
@@ -72,7 +72,7 @@ project "Snowfall"
         }
 
     filter "configurations:Release"
-        defines { "SF_NDEBUG" }
+        defines { "SW_NDEBUG" }
         runtime "Release"
         optimize "On"
 

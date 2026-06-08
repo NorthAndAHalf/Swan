@@ -20,7 +20,7 @@ Engine& Engine::GetEngine()
 
 void Engine::Init()
 {
-    spdlog::info("Starting Snowfall");
+    spdlog::info("Starting Swan");
 
     // Move to static function in window class
     spdlog::info("Initialising GLFW");
@@ -32,7 +32,7 @@ void Engine::Init()
     eventsystem = std::make_unique<EventSystem>();
     eventsystem->Init();
 
-    primaryWindow = std::make_unique<Window>("Snowfall", 1920, 1080, false);
+    primaryWindow = std::make_unique<Window>("Swan", 1920, 1080, false);
     primaryWindow->Init();
 
     inputManager = std::make_unique<InputManager>(primaryWindow.get());
@@ -66,30 +66,30 @@ void Engine::MainLoop()
 
 Window& Engine::GetPrimaryWindow()
 {
-    SF_ASSERT(primaryWindow, "Primary window is null");
+    SW_ASSERT(primaryWindow, "Primary window is null");
     return *primaryWindow;
 }
 
 EventSystem& Engine::Events()
 {
-    SF_ASSERT(eventsystem, "Event system is null");
+    SW_ASSERT(eventsystem, "Event system is null");
     return *eventsystem;
 }
 
 InputManager& Engine::Input()
 {
-    SF_ASSERT(inputManager, "Input is null");
+    SW_ASSERT(inputManager, "Input is null");
     return *inputManager;
 }
 
 TimeManager& Engine::Time()
 {
-    SF_ASSERT(timeManager, "Time manager is null");
+    SW_ASSERT(timeManager, "Time manager is null");
     return *timeManager;
 }
 
 OpenGLRenderer& Engine::Renderer()
 {
-    SF_ASSERT(m_Renderer, "Renderer is null");
+    SW_ASSERT(m_Renderer, "Renderer is null");
     return *m_Renderer;
 }

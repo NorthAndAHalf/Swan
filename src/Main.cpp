@@ -3,7 +3,7 @@
 #include "services/GameService.h"
 #include "services/ImGuiService.h"
 
-#ifdef SF_DEBUG
+#ifdef SW_DEBUG
 #define SPD_DEBUG_LEVEL(x) x;
 #else
 #define SPD_DEBUG_LEVEL(x);

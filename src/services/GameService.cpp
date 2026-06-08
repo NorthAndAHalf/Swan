@@ -16,7 +16,7 @@ void GameService::Init()
 
 void GameService::OnUpdate(UpdateEvent& e)
 {
-	if (Engine::Input().GetKey(SF_KEY_A))
+	if (Engine::Input().GetKey(SW_KEY_A))
 	{
 		double xpos = Engine::Input().GetMouseX();
 		double ypos = Engine::Input().GetMouseY();
@@ -26,7 +26,7 @@ void GameService::OnUpdate(UpdateEvent& e)
 
 void GameService::OnKeyPress(KeyPressEvent& e)
 {
-	if (e.keycode == SF_KEY_SPACE)
+	if (e.keycode == SW_KEY_SPACE)
 	{
 		spdlog::info("Jump");
 	}

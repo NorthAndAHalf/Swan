@@ -35,7 +35,7 @@ private:
 
 namespace ImGuiHelpers
 {
-	ImGuiKey sf_key_to_imgui_key(int key);
-	ImGuiMouseButton sf_mouse_button_to_imgui_mouse_button(int button);
-	ImGuiKey sf_gamepad_button_to_imgui_key(int button);
+	ImGuiKey SW_key_to_imgui_key(int key);
+	ImGuiMouseButton SW_mouse_button_to_imgui_mouse_button(int button);
+	ImGuiKey SW_gamepad_button_to_imgui_key(int button);
 }

@@ -28,7 +28,7 @@ void* LinearBuffer::allocate(size_t bytes, size_t alignment)
 
 void LinearBuffer::reset()
 {
-#ifdef SF_DEBUG
+#ifdef SW_DEBUG
 	// Clear the buffer to avoid seeing old data while debugging
 	std::memset(m_Data, 0x33, m_Size);
 #endif
