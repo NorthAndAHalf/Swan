@@ -1,20 +1,24 @@
 #include "GameService.h"
 
-#include "Engine/Engine.h"
 #include "spdlog/spdlog.h"
 
 GameService::GameService()
 {
+	Engine::Events().Subscribe<UpdateEvent>(SW_BIND_CALLBACK(GameService, OnUpdate));
+
+	Engine::Input().RegisterListener<KeyPressEvent>((InputListener*) this);
+	Engine::Input().RegisterListener<MousePressEvent>((InputListener*) this);
 }
 
-void GameService::Init()
+GameService::~GameService()
 {
-	Engine::Events().SubscribeGlobal<UpdateEvent, GameService, &GameService::OnUpdate>(this);
-	Engine::Events().Subscribe<KeyPressEvent, GameService, &GameService::OnKeyPress>(Layer::GAME, this);
-	Engine::Events().SubscribeGlobal<MousePressEvent, GameService, &GameService::OnMousePress>(this);
+	Engine::Events().Unsubscribe<UpdateEvent>(SW_BIND_CALLBACK(GameService, OnUpdate));
+
+	Engine::Input().DeregisterListener<KeyPressEvent>((InputListener*) this);
+	Engine::Input().DeregisterListener<MousePressEvent>((InputListener*) this);
 }
 
-void GameService::OnUpdate(UpdateEvent& e)
+void GameService::OnUpdate(const UpdateEvent& e)
 {
 	if (Engine::Input().GetKey(SW_KEY_A))
 	{
@@ -24,15 +28,15 @@ void GameService::OnUpdate(UpdateEvent& e)
 	}
 }
 
-void GameService::OnKeyPress(KeyPressEvent& e)
+void GameService::OnKeyPress(int key, int scancode, int mods)
 {
-	if (e.keycode == SW_KEY_SPACE)
+	if (key == SW_KEY_SPACE)
 	{
 		spdlog::info("Jump");
 	}
 }
 
-void GameService::OnMousePress(MousePressEvent& e)
+void GameService::OnMousePress(int button, int mods)
 {
 }
 

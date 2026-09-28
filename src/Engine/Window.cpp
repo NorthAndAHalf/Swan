@@ -105,7 +105,7 @@ void Window::SetEventCallbacks()
             int frameBufferHeight;
             glfwGetFramebufferSize(window, &frameBufferWidth, &frameBufferHeight);
 
-            Engine::Events().QueueEvent<WindowResizeEvent>(width, height, frameBufferWidth, frameBufferHeight);
+            Engine::Events().FireEvent<WindowResizeEvent>(width, height, frameBufferWidth, frameBufferHeight);
         });
 
 	glfwSetKeyCallback(glfwWindow, [](GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -117,23 +117,28 @@ void Window::SetEventCallbacks()
 			{
 			case GLFW_PRESS:
 			{
-				Engine::Events().QueueEvent<KeyPressEvent>(key, scancode, mods);
+				Engine::Events().FireEvent<KeyPressEvent>(key, scancode, mods);
 				break;
 			}
+            case GLFW_REPEAT:
+            {
+                Engine::Events().FireEvent<KeyRepeatEvent>(key, scancode, mods);
+                break;
+            }
 			case GLFW_RELEASE:
-				Engine::Events().QueueEvent<KeyReleaseEvent>(key, scancode, mods);
+				Engine::Events().FireEvent<KeyReleaseEvent>(key, scancode, mods);
 				break;
 			}
 		});
 
 	glfwSetCharCallback(glfwWindow, [](GLFWwindow* window, unsigned int codePoint)
 		{
-			Engine::Events().QueueEvent<CharEvent>(codePoint);
+			Engine::Events().FireEvent<CharEvent>(codePoint);
 		});
 
 	glfwSetCursorPosCallback(glfwWindow, [](GLFWwindow* window, double xpos, double ypos)
 		{
-			Engine::Events().QueueEvent<MouseMoveEvent>(xpos, ypos);
+			Engine::Events().FireEvent<MouseMoveEvent>(xpos, ypos);
 		});
 
 	glfwSetMouseButtonCallback(glfwWindow, [](GLFWwindow* window, int button, int action, int mods)
@@ -143,19 +148,19 @@ void Window::SetEventCallbacks()
 
 			if (action == GLFW_PRESS)
 			{
-				Engine::Events().QueueEvent<MousePressEvent>(button, mods);
+				Engine::Events().FireEvent<MousePressEvent>(button, mods);
 				return;
 			}
 			if (action == GLFW_RELEASE)
 			{
-				Engine::Events().QueueEvent<MouseReleaseEvent>(button, mods);
+				Engine::Events().FireEvent<MouseReleaseEvent>(button, mods);
 				return;
 			}
 		});
 
 	glfwSetScrollCallback(glfwWindow, [](GLFWwindow* window, double x_offset, double y_offset)
 		{
-			Engine::Events().QueueEvent<MouseWheelEvent>(x_offset, y_offset);
+			Engine::Events().FireEvent<MouseWheelEvent>(x_offset, y_offset);
 		});
 }
 

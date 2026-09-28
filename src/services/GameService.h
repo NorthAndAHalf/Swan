@@ -1,16 +1,16 @@
 #pragma once
 
 #include "Events/Event.h"
+#include "../Engine/Engine.h"
 
-class GameService
+class GameService : public InputListener
 {
 public:
 	GameService();
-
-	void Init();
+	~GameService();
 
 private:
-	void OnUpdate(UpdateEvent& e);
-	void OnKeyPress(KeyPressEvent& e);
-	void OnMousePress(MousePressEvent& e);
+	void OnUpdate(const UpdateEvent& e);
+	void OnKeyPress(int key, int scancode, int mods) override;
+	void OnMousePress(int button, int mods) override;
 };

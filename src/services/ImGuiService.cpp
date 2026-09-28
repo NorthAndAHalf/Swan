@@ -5,16 +5,10 @@
 #include "imgui/imgui.h"
 #include "imgui/backends/imgui_impl_opengl3.h"
 
-#include "Engine/Engine.h"
 #include "spdlog/spdlog.h"
 #include "imgui_internal.h"
 
 ImGuiService::ImGuiService()
-{
-	
-}
-
-void ImGuiService::Init()
 {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -31,24 +25,33 @@ void ImGuiService::Init()
 
 	ImGui_ImplOpenGL3_Init();
 
-	// Subscribe to events
-	
-	// Events handled in this file
-    Engine::Events().SubscribeGlobal<UpdateEvent, ImGuiService, &ImGuiService::OnUpdate>(this);
-    Engine::Events().SubscribeGlobal<WindowResizeEvent, ImGuiService, &ImGuiService::OnWindowResize>(this);
+    Engine::Events().Subscribe<UpdateEvent>(SW_BIND_CALLBACK(ImGuiService, OnUpdate));
+    Engine::Events().Subscribe<WindowResizeEvent>(SW_BIND_CALLBACK(ImGuiService, OnWindowResize));
                   
-                  
-	// Events handled by ImGui
-    Engine::Events().Subscribe<KeyPressEvent, ImGuiService, &ImGuiService::OnKeyPress>(Layer::DEBUG, this);
-    Engine::Events().Subscribe<KeyReleaseEvent, ImGuiService, &ImGuiService::OnKeyRelease>(Layer::DEBUG, this);
-    Engine::Events().Subscribe<CharEvent, ImGuiService, &ImGuiService::OnCharInput>(Layer::DEBUG, this);
-    Engine::Events().Subscribe<MousePressEvent, ImGuiService, &ImGuiService::OnMousePress>(Layer::DEBUG, this);
-    Engine::Events().Subscribe<MouseReleaseEvent, ImGuiService, &ImGuiService::OnMouseRelease>(Layer::DEBUG, this);
-    Engine::Events().Subscribe<MouseWheelEvent, ImGuiService, &ImGuiService::OnMouseWheel>(Layer::DEBUG, this);
-    Engine::Events().Subscribe<MouseMoveEvent, ImGuiService, &ImGuiService::OnMouseMove>(Layer::DEBUG, this);
+    Engine::Input().RegisterDebugListener<KeyPressEvent>((InputListener*) this);
+    Engine::Input().RegisterDebugListener<KeyReleaseEvent>((InputListener*) this);
+    Engine::Input().RegisterDebugListener<CharEvent>((InputListener*) this);
+    Engine::Input().RegisterDebugListener<MouseMoveEvent>((InputListener*) this);
+    Engine::Input().RegisterDebugListener<MousePressEvent>((InputListener*) this);
+    Engine::Input().RegisterDebugListener<MouseReleaseEvent>((InputListener*) this);
+    Engine::Input().RegisterDebugListener<MouseWheelEvent>((InputListener*) this);
 }
 
-void ImGuiService::OnUpdate(UpdateEvent& e)
+ImGuiService::~ImGuiService()
+{
+    Engine::Events().Unsubscribe<UpdateEvent>(SW_BIND_CALLBACK(ImGuiService, OnUpdate));
+    Engine::Events().Unsubscribe<WindowResizeEvent>(SW_BIND_CALLBACK(ImGuiService, OnWindowResize));
+
+    Engine::Input().DeregisterDebugListener<KeyPressEvent>((InputListener*) this);
+    Engine::Input().DeregisterDebugListener<KeyReleaseEvent>((InputListener*) this);
+    Engine::Input().DeregisterDebugListener<CharEvent>((InputListener*) this);
+    Engine::Input().DeregisterDebugListener<MouseMoveEvent>((InputListener*) this);
+    Engine::Input().DeregisterDebugListener<MousePressEvent>((InputListener*) this);
+    Engine::Input().DeregisterDebugListener<MouseReleaseEvent>((InputListener*) this);
+    Engine::Input().DeregisterDebugListener<MouseWheelEvent>((InputListener*) this);
+}
+
+void ImGuiService::OnUpdate(const UpdateEvent& e)
 {
     int frameBufferWidth;
     int frameBufferHeight;
@@ -62,7 +65,6 @@ void ImGuiService::OnUpdate(UpdateEvent& e)
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui::NewFrame();
 	ImGui::ShowDemoWindow();
-    m_ImGuiUsedEscape = ImGui::GetKeyOwner(ImGuiKey_Escape) != ImGuiKeyOwner_NoOwner;
 
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -76,79 +78,53 @@ void ImGuiService::OnUpdate(UpdateEvent& e)
     }
 }
 
-void ImGuiService::OnWindowResize(WindowResizeEvent& e)
+void ImGuiService::OnWindowResize(const WindowResizeEvent& e)
 {
     m_Io->DisplaySize = ImVec2((float)e.frameBufferWidth, (float)e.frameBufferHeight);
 }
 
-void ImGuiService::OnKeyPress(KeyPressEvent& e) {
-    UpdateKeyModifiers(e.mods);
-    ImGuiKey key = ImGuiHelpers::SW_key_to_imgui_key(e.keycode);
-    m_Io->AddKeyEvent(key, true);
-
-    if (m_HasUserControl)
-    {
-        e.handled = true;
-    }
-
-    if (e.keycode == SW_KEY_ESCAPE && !m_ImGuiUsedEscape)
-    {
-        if (m_HasUserControl) ReleaseUserControl();
-        else TakeUserControl();
-    }
+void ImGuiService::OnKeyPress(int key, int scancode, int mods) {
+    UpdateKeyModifiers(mods);
+    ImGuiKey imguiKey = ImGuiHelpers::SW_key_to_imgui_key(key);
+    m_Io->AddKeyEvent(imguiKey, true);
 }
 
-void ImGuiService::OnKeyRelease(KeyReleaseEvent& e) {
-    UpdateKeyModifiers(e.mods);
-    ImGuiKey key = ImGuiHelpers::SW_key_to_imgui_key(e.keycode);
-    m_Io->AddKeyEvent(key, false);
-    if (m_Io->WantCaptureKeyboard) e.handled = true;
+void ImGuiService::OnKeyRepeat(int key, int scancode, int mods) {
+    UpdateKeyModifiers(mods);
+    ImGuiKey imguiKey = ImGuiHelpers::SW_key_to_imgui_key(key);
+    m_Io->AddKeyEvent(imguiKey, true);
 }
 
-void ImGuiService::OnCharInput(CharEvent& e) {
-    m_Io->AddInputCharacter(e.codePoint);
-    if (m_Io->WantCaptureKeyboard) e.handled = true;
+void ImGuiService::OnKeyRelease(int key, int scancode, int mods) {
+    UpdateKeyModifiers(mods);
+    ImGuiKey imguiKey = ImGuiHelpers::SW_key_to_imgui_key(key);
+    m_Io->AddKeyEvent(imguiKey, false);
 }
 
-void ImGuiService::OnMousePress(MousePressEvent& e) {
-    UpdateKeyModifiers(e.mods);
-    ImGuiMouseButton button = ImGuiHelpers::SW_mouse_button_to_imgui_mouse_button(e.button);
-    m_Io->AddMouseButtonEvent(button, true);
-    if (m_Io->WantCaptureMouse) e.handled = true;
+void ImGuiService::OnCharInput(unsigned int codepoint) {
+    m_Io->AddInputCharacter(codepoint);
 }
 
-void ImGuiService::OnMouseRelease(MouseReleaseEvent& e) {
-    UpdateKeyModifiers(e.mods);
-    ImGuiMouseButton button = ImGuiHelpers::SW_mouse_button_to_imgui_mouse_button(e.button);
-    m_Io->AddMouseButtonEvent(button, false);
-    if (m_Io->WantCaptureMouse) e.handled = true;
-}
-
-void ImGuiService::OnMouseWheel(MouseWheelEvent& e) {
-    m_Io->AddMouseWheelEvent(e.x_offset, e.y_offset);
-    if (m_Io->WantCaptureMouse) e.handled = true;
-}
-
-void ImGuiService::OnMouseMove(MouseMoveEvent& e) {
+void ImGuiService::OnMouseMove(double xpos, double ypos) {
     float xScale, yScale;
     Engine::GetEngine().GetPrimaryWindow().GetContentScale(&xScale, &yScale);
-    m_Io->AddMousePosEvent(e.xpos, e.ypos);
+    m_Io->AddMousePosEvent(xpos, ypos);
 }
 
-void ImGuiService::ReleaseUserControl()
-{
-    m_HasUserControl = false;
-    m_Io->ConfigFlags |= ImGuiConfigFlags_NoMouse;
-    Engine::GetEngine().GetPrimaryWindow().DisableCursor();
-    Engine::Events().QueueEvent<ImGuiReleaseControlEvent>();
+void ImGuiService::OnMousePress(int button, int mods) {
+    UpdateKeyModifiers(mods);
+    ImGuiMouseButton imguiButton = ImGuiHelpers::SW_mouse_button_to_imgui_mouse_button(button);
+    m_Io->AddMouseButtonEvent(imguiButton, true);
 }
 
-void ImGuiService::TakeUserControl()
-{
-    m_HasUserControl = true;
-    m_Io->ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
-    Engine::GetEngine().GetPrimaryWindow().EnableCursor();
-    Engine::Events().QueueEvent<ImGuiTakeControlEvent>();
+void ImGuiService::OnMouseRelease(int button, int mods) {
+    UpdateKeyModifiers(mods);
+    ImGuiMouseButton imguiButton = ImGuiHelpers::SW_mouse_button_to_imgui_mouse_button(button);
+    m_Io->AddMouseButtonEvent(imguiButton, false);
+}
+
+void ImGuiService::OnMouseWheel(double x_offset, double y_offset) {
+    m_Io->AddMouseWheelEvent(x_offset, y_offset);
 }
 
 void ImGuiService::Shutdown()  

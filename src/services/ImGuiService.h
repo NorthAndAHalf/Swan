@@ -3,34 +3,29 @@
 #include "Events/Event.h"
 #include "imgui/imgui.h"
 #include "Core.h"
+#include "../Engine/Engine.h"
 
-class ImGuiService
+class ImGuiService : public InputListener
 {
 public:
 	ImGuiService();
-
-	void Init();
+	~ImGuiService();
 	
 	void Shutdown();
 
-private:
-	void OnUpdate(UpdateEvent& e);
-	void OnWindowResize(WindowResizeEvent& e);
+	void OnUpdate(const UpdateEvent& e);
+	void OnWindowResize(const WindowResizeEvent& e);
 	void UpdateKeyModifiers(int mods);
-	void OnKeyPress(KeyPressEvent& e);
-	void OnKeyRelease(KeyReleaseEvent& e);
-	void OnCharInput(CharEvent& e);
-	void OnMousePress(MousePressEvent& e);
-	void OnMouseRelease(MouseReleaseEvent& e);
-	void OnMouseWheel(MouseWheelEvent& e);
-	void OnMouseMove(MouseMoveEvent& e);
-    
-	void ReleaseUserControl();
-	void TakeUserControl();
-	bool m_HasUserControl;
+	void OnKeyPress(int key, int scancode, int mods) override;
+	void OnKeyRepeat(int key, int scancode, int mods) override;
+	void OnKeyRelease(int key, int scancode, int mods) override;
+	void OnCharInput(unsigned int codepoint) override;
+	void OnMouseMove(double xpos, double ypos) override;
+	void OnMousePress(int button, int mods) override;
+	void OnMouseRelease(int button, int mods) override;
+	void OnMouseWheel(double x_offset, double y_offset) override;
 
     ImGuiIO* m_Io;
-	bool m_ImGuiUsedEscape = false;
 };
 
 namespace ImGuiHelpers

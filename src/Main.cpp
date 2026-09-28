@@ -25,9 +25,7 @@ int main()
 	}
 
 	ImGuiService* imguiService = new ImGuiService();
-	imguiService->Init();
 	GameService* gameService = new GameService();
-	gameService->Init();
 
 	try
 	{

@@ -30,13 +30,11 @@ void Engine::Init()
     }
     
     eventsystem = std::make_unique<EventSystem>();
-    eventsystem->Init();
 
     primaryWindow = std::make_unique<Window>("Swan", 1920, 1080, false);
     primaryWindow->Init();
 
     inputManager = std::make_unique<InputManager>(primaryWindow.get());
-    inputManager->Init();
 
     timeManager = std::make_unique<TimeManager>();
 
@@ -58,9 +56,9 @@ void Engine::MainLoop()
     while (!primaryWindow->WindowShouldClose())
     {
         eventsystem->DispatchQueuedEvents();
+        primaryWindow->Update();
         m_Renderer->Update();
         eventsystem->FireEvent<UpdateEvent>();
-        primaryWindow->Update();
     }
 }
 

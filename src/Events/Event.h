@@ -9,7 +9,6 @@ class Event
 	friend class EventSystem;
 public:
 	virtual ~Event() = default;
-	bool handled = false;
 
 	uint32_t GetTypeId() { return typeId; }
 protected:
@@ -39,6 +38,18 @@ class KeyPressEvent : public Event
 public:
 	KeyPressEvent(int _keycode, int _scancode, int _mods)
 		:keycode(_keycode), scancode(_scancode), mods(_mods) {}
+
+	const int keycode;
+	const int scancode;
+	const int mods;
+};
+
+class KeyRepeatEvent : public Event
+{
+public:
+	KeyRepeatEvent(int _keycode, int _scancode, int _mods)
+		:keycode(_keycode), scancode(_scancode), mods(_mods) {
+	}
 
 	const int keycode;
 	const int scancode;
