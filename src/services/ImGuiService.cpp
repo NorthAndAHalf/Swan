@@ -6,6 +6,7 @@
 #include "imgui/backends/imgui_impl_opengl3.h"
 
 #include "spdlog/spdlog.h"
+#include "../Engine/Engine.h"
 #include "imgui_internal.h"
 
 ImGuiService::ImGuiService()
@@ -25,8 +26,8 @@ ImGuiService::ImGuiService()
 
 	ImGui_ImplOpenGL3_Init();
 
-    Engine::Events().Subscribe<UpdateEvent>(SW_BIND_CALLBACK(ImGuiService, OnUpdate));
-    Engine::Events().Subscribe<WindowResizeEvent>(SW_BIND_CALLBACK(ImGuiService, OnWindowResize));
+    SW_EVENT_SUBSCRIBE(UpdateEvent, OnUpdate);
+    SW_EVENT_SUBSCRIBE(WindowResizeEvent, OnWindowResize);
                   
     Engine::Input().RegisterDebugListener<KeyPressEvent>((InputListener*) this);
     Engine::Input().RegisterDebugListener<KeyReleaseEvent>((InputListener*) this);
@@ -39,9 +40,6 @@ ImGuiService::ImGuiService()
 
 ImGuiService::~ImGuiService()
 {
-    Engine::Events().Unsubscribe<UpdateEvent>(SW_BIND_CALLBACK(ImGuiService, OnUpdate));
-    Engine::Events().Unsubscribe<WindowResizeEvent>(SW_BIND_CALLBACK(ImGuiService, OnWindowResize));
-
     Engine::Input().DeregisterDebugListener<KeyPressEvent>((InputListener*) this);
     Engine::Input().DeregisterDebugListener<KeyReleaseEvent>((InputListener*) this);
     Engine::Input().DeregisterDebugListener<CharEvent>((InputListener*) this);

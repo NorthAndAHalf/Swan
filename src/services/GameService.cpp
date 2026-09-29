@@ -1,10 +1,19 @@
 #include "GameService.h"
-
+#include "../Engine/Engine.h"
 #include "spdlog/spdlog.h"
+Responder::Responder()
+{
+	SW_EVENT_SUBSCRIBE(KeyPressEvent, OnKeyPress);
+}
+
+void Responder::OnKeyPress(const KeyPressEvent& e)
+{
+	spdlog::info("Response: {0}", e.keycode);
+}
 
 GameService::GameService()
 {
-	Engine::Events().Subscribe<UpdateEvent>(SW_BIND_CALLBACK(GameService, OnUpdate));
+	SW_EVENT_SUBSCRIBE(UpdateEvent, OnUpdate);
 
 	Engine::Input().RegisterListener<KeyPressEvent>((InputListener*) this);
 	Engine::Input().RegisterListener<MousePressEvent>((InputListener*) this);
@@ -12,8 +21,6 @@ GameService::GameService()
 
 GameService::~GameService()
 {
-	Engine::Events().Unsubscribe<UpdateEvent>(SW_BIND_CALLBACK(GameService, OnUpdate));
-
 	Engine::Input().DeregisterListener<KeyPressEvent>((InputListener*) this);
 	Engine::Input().DeregisterListener<MousePressEvent>((InputListener*) this);
 }
@@ -33,6 +40,21 @@ void GameService::OnKeyPress(int key, int scancode, int mods)
 	if (key == SW_KEY_SPACE)
 	{
 		spdlog::info("Jump");
+	}
+	if (key == SW_KEY_R)
+	{
+		responders.emplace_back();
+	}
+	if (key == SW_KEY_T)
+	{
+		if (responders.empty())
+		{
+			spdlog::warn("No responders here");
+		}
+		else
+		{
+			responders.pop_back();
+		}
 	}
 }
 

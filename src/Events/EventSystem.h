@@ -12,8 +12,6 @@
 #include "spdlog/spdlog.h"
 #include <concepts>
 
-#define SW_BIND_CALLBACK(type, func) std::bind(&type::func, this, std::placeholders::_1)   
-
 constexpr uint32_t EVENT_QUEUE_COUNT = 5000;
 
 // Static counter will not work cross DLL, so will need to be refactored if cross DLL compilation becomes required
@@ -29,33 +27,25 @@ private:
     inline static std::atomic<uint32_t> m_Counter{ 1 };
 };
 
+struct Callback
+{
+    Callback(std::function<void(const Event&)> _func, uint64_t _id) 
+        : func(_func), id(_id) {}
+
+    std::function<void(const Event&)> func;
+    uint64_t id;
+    uint8_t markedForDeletion = false;
+};
+
 class EventSystem {
+
+    friend class EventListener;
+
 public:
     EventSystem();
     ~EventSystem();
 
     void DispatchQueuedEvents();
-
-    template<typename T>
-    requires std::derived_from<T, Event>
-    void Subscribe(std::function<void(const T&)> func)
-    {
-        uint32_t id = TypeIdentifier::GetId<T>();
-
-        m_CallbackMap[id].push_back(
-            [func](const Event& e)
-            {
-                func(static_cast<const T&>(e));
-            });
-    }
-
-    // Need to implement an ID system to support subscriptions
-    template<typename T>
-        requires std::derived_from<T, Event>
-    void Unsubscribe(std::function<void(const T&)> func)
-    {
-        spdlog::error("Event unsubscriptions are not yet supported");
-    }
 
     template<typename T, typename... Args>
     void FireEvent(Args&&... args)
@@ -82,7 +72,26 @@ public:
 private:
     void NotifySubscribers(Event& e);
 
-private:
+    // Subscribe and unsubscribe are only called from friend EventListeners, which wraps these in protected functions to abstract away callback ID management
+    template<typename T>
+        requires std::derived_from<T, Event>
+    void Subscribe(std::function<void(const T&)> func, uint32_t* typeId, uint64_t* callbackId)
+    {
+        uint32_t id = TypeIdentifier::GetId<T>();
+
+        m_PendingSubscriptions[id].push_back(
+            Callback(
+                [func](const Event& e)
+                {
+                    func(static_cast<const T&>(e));
+                },
+                m_NextCallbackId
+            ));
+
+        *typeId = id;
+        *callbackId = m_NextCallbackId++;
+    }
+    void Unsubscribe(uint32_t typeId, uint64_t callbackId);
 
     LinearBuffer m_EventBuffer1{ 1024 * 64 }; // 64KB
     LinearBuffer m_EventBuffer2{ 1024 * 64 }; // 64KB
@@ -98,8 +107,15 @@ private:
     Event** m_DispatchQueue;  
     LinearBuffer* m_DispatchBuffer;
 
-    std::unordered_map<uint32_t, std::vector<std::function<void(const Event&)>>> m_CallbackMap;
+    std::unordered_map<uint32_t, std::vector<Callback>> m_CallbackMap;
+    std::unordered_map<uint32_t, std::vector<Callback>> m_PendingSubscriptions;
+    std::vector<uint32_t> m_DirtyEventTypes;
+
+    uint64_t m_NextCallbackId = 0;
 
     void SwapQueues();
     void ClearDispatchQueue();
+    void FlushPendingSubscriptions();
+    void FlushPendingUnsubscribes();
+    void ResetCache();
 };

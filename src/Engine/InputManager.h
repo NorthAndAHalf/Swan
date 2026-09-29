@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Window.h"
+#include "../Events/EventListener.h"
+#include "../Events/Event.h"
 
 // To think about for the future, could implement some sort of per frame key caching to avoid redundant keydown polls to the input source
 // Not sure about this yet, but usuability of the system should remain the same as this simple approach
@@ -38,7 +40,7 @@ private:
 	Window* m_Window;
 };
 
-class InputManager
+class InputManager : public EventListener
 {
 public:
 	InputManager(Window* w);
@@ -77,19 +79,26 @@ public:
 	void DeregisterDebugListener(InputListener* listener)
 	{
 		uint32_t id = TypeIdentifier::GetId<T>();
-		m_DebugListeners[id].erase(remove(m_Listeners[id].begin(), m_Listeners[id].end(), listener), m_Listeners[id].end());
+		m_DebugListeners[id].erase(remove(m_DebugListeners[id].begin(), m_DebugListeners[id].end(), listener), m_DebugListeners[id].end());
 	}
 
 private:
+	void OnKeyPress(const KeyPressEvent& e);
+	void OnKeyRepeat(const KeyRepeatEvent& e);
+	void OnKeyRelease(const KeyReleaseEvent& e);
+	void OnCharInput(const CharEvent& e);
+	void OnMouseMove(const MouseMoveEvent& e);
+	void OnMousePress(const MousePressEvent& e);
+	void OnMouseRelease(const MouseReleaseEvent& e);
+	void OnMouseWheel(const MouseWheelEvent& e);
+
 	IInputSource* m_InputSource;
 
 	double m_MouseX;
 	double m_MouseY;
 
 	bool m_IsDebugMode = false;
-	
-	// Replace with custom allocater eventually to control heap allocations
-	// Listeners are not modified every frame so this is alright for now
+
 	std::unordered_map<uint32_t, std::vector<InputListener*>> m_Listeners;
 	std::unordered_map<uint32_t, std::vector<InputListener*>> m_DebugListeners;
 };

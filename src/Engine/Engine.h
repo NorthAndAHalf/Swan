@@ -8,7 +8,8 @@
 
 #include "Engine/InputManager.h"
 #include "Engine/TimeManager.h"
-
+#include "../services/ImGuiService.h"
+#include "../services/GameService.h"
 
 class Engine
 {
@@ -40,4 +41,7 @@ private:
 	static std::unique_ptr<TimeManager> timeManager;
 
 	static std::unique_ptr<OpenGLRenderer> m_Renderer;
+
+	ImGuiService* imguiService;
+	GameService* gameService;
 };

@@ -24,9 +24,6 @@ int main()
 		return -1;
 	}
 
-	ImGuiService* imguiService = new ImGuiService();
-	GameService* gameService = new GameService();
-
 	try
 	{
 		Engine::GetEngine().MainLoop();

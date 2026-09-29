@@ -11,7 +11,7 @@ public:
 	virtual ~Event() = default;
 
 	uint32_t GetTypeId() { return typeId; }
-protected:
+private:
 	uint32_t typeId = 0; // Used by the event dispatcher to map event types to buckets
 };
 

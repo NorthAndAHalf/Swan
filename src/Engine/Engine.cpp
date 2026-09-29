@@ -1,6 +1,10 @@
 #include "Engine.h"
 #include "spdlog/spdlog.h"
 #include <stdexcept>
+#include "Events/EventSystem.h"
+#include "Engine/InputManager.h"
+#include "Engine/TimeManager.h"
+#include "Rendering/OpenGL/OpenGLRenderer.h"
 
 std::unique_ptr<EventSystem> Engine::eventsystem = nullptr;
 std::unique_ptr<Window> Engine::primaryWindow = nullptr;
@@ -31,15 +35,18 @@ void Engine::Init()
     
     eventsystem = std::make_unique<EventSystem>();
 
-    primaryWindow = std::make_unique<Window>("Swan", 1920, 1080, false);
+    primaryWindow = std::make_unique<Window>("Swan", 1280, 720, false);
     primaryWindow->Init();
 
     inputManager = std::make_unique<InputManager>(primaryWindow.get());
 
     timeManager = std::make_unique<TimeManager>();
 
-    m_Renderer = std::make_unique<OpenGLRenderer>(1920, 1080);
+    m_Renderer = std::make_unique<OpenGLRenderer>(1280, 720);
     m_Renderer->Init();
+
+    imguiService = new ImGuiService();
+    gameService = new GameService();
 
     spdlog::info("Engine initialised successfully");
 }
@@ -53,13 +60,18 @@ void Engine::Shutdown()
 
 void Engine::MainLoop()
 {
+
     while (!primaryWindow->WindowShouldClose())
     {
         eventsystem->DispatchQueuedEvents();
         primaryWindow->Update();
         m_Renderer->Update();
+        inputManager->Update();
         eventsystem->FireEvent<UpdateEvent>();
     }
+
+    delete gameService;
+    delete imguiService;
 }
 
 Window& Engine::GetPrimaryWindow()

@@ -3,9 +3,10 @@
 #include "Events/Event.h"
 #include "imgui/imgui.h"
 #include "Core.h"
-#include "../Engine/Engine.h"
+#include "../Events/EventListener.h"
+#include "../Engine/InputManager.h"
 
-class ImGuiService : public InputListener
+class ImGuiService : public InputListener, public EventListener
 {
 public:
 	ImGuiService();
