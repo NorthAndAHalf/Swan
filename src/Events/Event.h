@@ -12,7 +12,7 @@ public:
 
 	uint32_t GetTypeId() { return typeId; }
 private:
-	uint32_t typeId = 0; // Used by the event dispatcher to map event types to buckets
+	uint32_t typeId = 0; // Used by the event dispatcher to map event types to callbacks
 };
 
 class UpdateEvent : public Event
