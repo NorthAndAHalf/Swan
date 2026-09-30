@@ -48,7 +48,6 @@ project "Swan"
         "vendor/glm",
         "vendor/spdlog/include",
         "vendor/stbimage",
-        "vendor/assimp/include",
         "vendor/imgui",
         "vendor/imgui/imgui"
     }
@@ -64,10 +63,7 @@ project "Swan"
         runtime "Debug"
         symbols "On"
 
-        links { "libs/assimp/Debug/assimp-vc145-mtd.lib" }
-
         postbuildcommands {
-            "{COPY} \"libs/assimp/Debug/*.dll\" \"%{cfg.targetdir}\"",
             "{COPYDIR} \"assets\" \"%{cfg.targetdir}/assets\""
         }
 
@@ -76,10 +72,7 @@ project "Swan"
         runtime "Release"
         optimize "On"
 
-        links { "libs/assimp/Release/assimp-vc145-mt.lib" }
-
         postbuildcommands {
-            "{COPY} \"libs/assimp/Release/*.dll\" \"%{cfg.targetdir}\"",
             "{COPYDIR} \"assets\" \"%{cfg.targetdir}/assets\""
         }
 
