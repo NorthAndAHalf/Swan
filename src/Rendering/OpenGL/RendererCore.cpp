@@ -1,4 +1,4 @@
-#include "OpenGLRendererCore.h"
+#include "RendererCore.h"
 #include "glad/glad.h"
 
 void ScreenQuad::Init()

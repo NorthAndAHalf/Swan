@@ -1,6 +1,6 @@
 #pragma once
 
-#include "OpenGLRendererCore.h"
+#include "RendererCore.h"
 #include "ShaderProgram.h"
 #include "Memory/LinearBuffer.h"
 #include <vector>
@@ -8,10 +8,10 @@
 #include "Texture.h"
 #include "Framebuffer.h"
 
-class OpenGLRenderer
+class Renderer
 {
 public:
-	OpenGLRenderer(uint32_t viewportWidth, uint32_t viewportHeight);
+	Renderer(uint32_t viewportWidth, uint32_t viewportHeight);
 	void Init();
 	void Update();
 	bool CompileShaders();

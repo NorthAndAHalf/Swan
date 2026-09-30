@@ -4,13 +4,13 @@
 #include "Events/EventSystem.h"
 #include "Engine/InputManager.h"
 #include "Engine/TimeManager.h"
-#include "Rendering/OpenGL/OpenGLRenderer.h"
+#include "Rendering/OpenGL/Renderer.h"
 
 std::unique_ptr<EventSystem> Engine::eventsystem = nullptr;
 std::unique_ptr<Window> Engine::primaryWindow = nullptr;
 std::unique_ptr<InputManager> Engine::inputManager = nullptr;
 std::unique_ptr<TimeManager> Engine::timeManager = nullptr;
-std::unique_ptr<OpenGLRenderer> Engine::m_Renderer = nullptr;
+std::unique_ptr<Renderer> Engine::m_Renderer = nullptr;
 
 Engine::Engine()
 {
@@ -42,7 +42,7 @@ void Engine::Init()
 
     timeManager = std::make_unique<TimeManager>();
 
-    m_Renderer = std::make_unique<OpenGLRenderer>(1280, 720);
+    m_Renderer = std::make_unique<::Renderer>(1280, 720);
     m_Renderer->Init();
 
     imguiService = new ImGuiService();
@@ -98,7 +98,7 @@ TimeManager& Engine::Time()
     return *timeManager;
 }
 
-OpenGLRenderer& Engine::Renderer()
+Renderer& Engine::Renderer()
 {
     SW_ASSERT(m_Renderer, "Renderer is null");
     return *m_Renderer;

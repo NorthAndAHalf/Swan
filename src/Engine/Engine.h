@@ -1,7 +1,7 @@
 #pragma once
 #include "Core.h"
 #include <mutex>
-#include "Rendering/OpenGL/OpenGLRenderer.h"
+#include "Rendering/OpenGL/Renderer.h"
 #include "Events/EventSystem.h"
 #include "Window.h"
 #include <memory>
@@ -29,7 +29,7 @@ public:
 	static EventSystem& Events();
 	static InputManager& Input();
 	static TimeManager& Time();
-	static OpenGLRenderer& Renderer();
+	static Renderer& Renderer();
 
 private:
 	Engine();
@@ -40,7 +40,7 @@ private:
 	static std::unique_ptr<InputManager> inputManager;
 	static std::unique_ptr<TimeManager> timeManager;
 
-	static std::unique_ptr<OpenGLRenderer> m_Renderer;
+	static std::unique_ptr<::Renderer> m_Renderer;
 
 	ImGuiService* imguiService;
 	GameService* gameService;

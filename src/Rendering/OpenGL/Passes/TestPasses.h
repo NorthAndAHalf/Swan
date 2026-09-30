@@ -1,5 +1,5 @@
 #pragma once
-#include "Rendering/OpenGL/OpenGLRendererCore.h"
+#include "Rendering/OpenGL/RendererCore.h"
 #include "Rendering/OpenGL/Framebuffer.h"
 #include "Rendering/OpenGL/ShaderProgram.h"
 

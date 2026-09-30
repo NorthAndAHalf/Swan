@@ -1,10 +1,10 @@
-#include "OpenGLRenderer.h"
+#include "Renderer.h"
 #include "Rendering/OpenGL/Mesh.h"
 #include "spdlog/spdlog.h"
 #include "Passes/TestPasses.h"
 
 // Allocate space for ten million vertices, 50 million indices
-OpenGLRenderer::OpenGLRenderer(uint32_t viewportWidth, uint32_t viewportHeight)
+Renderer::Renderer(uint32_t viewportWidth, uint32_t viewportHeight)
 	: m_viewportWidth(viewportWidth), m_viewportHeight(viewportHeight),
 	m_vertexPool(LinearBuffer(sizeof(Vertex) * 10000000)),
 	m_indexPool(LinearBuffer(sizeof(uint32_t) * 50000000)),
@@ -30,7 +30,7 @@ OpenGLRenderer::OpenGLRenderer(uint32_t viewportWidth, uint32_t viewportHeight)
 		"assets/shaders/glsl/frag_QuadTexture.glsl"));
 }
 
-void OpenGLRenderer::Init()
+void Renderer::Init()
 {
 	CompileShaders();
 
@@ -39,7 +39,7 @@ void OpenGLRenderer::Init()
 	m_quad.Init();
 }
 
-void OpenGLRenderer::Update()
+void Renderer::Update()
 {
 	m_quad.BindVAO();
 	TestPass(m_quad, *m_writeFramebuffer, *m_shaders[0]);
@@ -50,7 +50,7 @@ void OpenGLRenderer::Update()
 	glBindVertexArray(0);
 }
 
-bool OpenGLRenderer::CompileShaders()
+bool Renderer::CompileShaders()
 {
 	spdlog::info("Compiling Shaders");
 	for (auto&& shader : m_shaders)
@@ -62,7 +62,7 @@ bool OpenGLRenderer::CompileShaders()
 	return true;
 }
 
-void OpenGLRenderer::SwapFramebuffers()
+void Renderer::SwapFramebuffers()
 {
 	Framebuffer* new_read = m_writeFramebuffer;
 	Framebuffer* new_write = m_readFramebuffer;
@@ -71,22 +71,22 @@ void OpenGLRenderer::SwapFramebuffers()
 	m_readFramebuffer = new_read;
 }
 
-uint32_t OpenGLRenderer::GetViewportWidth()
+uint32_t Renderer::GetViewportWidth()
 {
 	return m_viewportWidth;
 }
 
-void OpenGLRenderer::SetViewportWidth(uint32_t w)
+void Renderer::SetViewportWidth(uint32_t w)
 {
 	m_viewportWidth = w;
 }
 
-uint32_t OpenGLRenderer::GetViewportHeight()
+uint32_t Renderer::GetViewportHeight()
 {
 	return m_viewportHeight;
 }
 
-void OpenGLRenderer::SetViewportHeight(uint32_t h)
+void Renderer::SetViewportHeight(uint32_t h)
 {
 	m_viewportHeight = h;
 }
