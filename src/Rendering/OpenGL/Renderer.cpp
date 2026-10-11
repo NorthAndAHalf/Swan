@@ -1,13 +1,11 @@
 #include "Renderer.h"
-#include "Rendering/OpenGL/Mesh.h"
+#include "Rendering/OpenGL/Mesh/Mesh.h"
 #include "spdlog/spdlog.h"
 #include "Passes/TestPasses.h"
 
 // Allocate space for ten million vertices, 50 million indices
 Renderer::Renderer(uint32_t viewportWidth, uint32_t viewportHeight)
 	: m_viewportWidth(viewportWidth), m_viewportHeight(viewportHeight),
-	m_vertexPool(LinearBuffer(sizeof(Vertex) * 10000000)),
-	m_indexPool(LinearBuffer(sizeof(uint32_t) * 50000000)),
 	m_framebuffer1(Framebuffer("FB1", viewportWidth, viewportHeight, true, false)),
 	m_framebuffer2(Framebuffer("FB1", viewportWidth, viewportHeight, true, false))
 {
@@ -28,6 +26,8 @@ Renderer::Renderer(uint32_t viewportWidth, uint32_t viewportHeight)
 		"Textured Quad",
 		"assets/shaders/glsl/vert_Quad.glsl",
 		"assets/shaders/glsl/frag_QuadTexture.glsl"));
+
+	m_GPUMeshPool = new GPUMeshPool();
 }
 
 void Renderer::Init()
@@ -89,5 +89,11 @@ uint32_t Renderer::GetViewportHeight()
 void Renderer::SetViewportHeight(uint32_t h)
 {
 	m_viewportHeight = h;
+}
+
+uint32_t Renderer::AddTextureToPool(uint32_t width, uint32_t height, uint32_t channels, const uint8_t* data, bool srgb)
+{
+	m_texturePool.push_back(Texture(width, height, channels, data, srgb));
+	return m_texturePool.size() - 1;
 }
 

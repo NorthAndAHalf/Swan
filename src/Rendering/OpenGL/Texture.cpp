@@ -1,39 +1,38 @@
 #include "Texture.h"
 #include "glad/glad.h"
 
-Texture::Texture(uint32_t width, uint32_t height)
-	: m_data(NULL), m_width(width), m_height(height)
+Texture::Texture(uint32_t width, uint32_t height, uint32_t channels,
+    const uint8_t* data, bool srgb)
+    : m_width(width), m_height(height)
 {
-	glGenTextures(1, &m_id);
-	glBindTexture(GL_TEXTURE_2D, m_id);
+    GLenum format = GL_RGBA;
+    GLenum internalFormat = srgb ? GL_SRGB8_ALPHA8 : GL_RGBA8;
+    switch (channels) {
+    case 1: format = GL_RED;  internalFormat = GL_R8;  break;
+    case 2: format = GL_RG;   internalFormat = GL_RG8; break;
+    case 3: format = GL_RGB;  internalFormat = srgb ? GL_SRGB8 : GL_RGB8; break;
+    case 4: break;
+    }
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_width, m_height, 0, GL_RGB, GL_UNSIGNED_BYTE, m_data);
+    glGenTextures(1, &m_id);
+    glBindTexture(GL_TEXTURE_2D, m_id);
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_width, m_height, 0,
+        format, GL_UNSIGNED_BYTE, data);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-const void* Texture::GetData()
+Texture::~Texture()
 {
-	return m_data;
+    glDeleteTextures(1, &m_id);
 }
 
-uint32_t Texture::GetViewportWidth()
-{
-	return m_width;
-}
 
-void Texture::SetViewportWidth(uint32_t w)
-{
-	m_width = w;
-}
-
-uint32_t Texture::GetViewportHeight()
-{
-	return m_height;
-}
-
-void Texture::SetViewportHeight(uint32_t h)
-{
-	m_height = h;
-}

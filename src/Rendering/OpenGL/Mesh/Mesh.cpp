@@ -1,11 +1,11 @@
-#include "MeshRenderer.h"
+#include "Mesh.h"
 
-MeshRenderer::MeshRenderer(Mesh mesh)
-	: m_Mesh(mesh), m_CacheDirty(false)
+Mesh::Mesh()
+	:  m_CacheDirty(false)
 {
 }
 
-const glm::mat4 MeshRenderer::GetModelMatrix()
+const glm::mat4 Mesh::GetModelMatrix()
 {
 	if (m_CacheDirty) {
 		m_CachedMatrix = glm::translate(glm::mat4(1.0f), m_Position)
@@ -16,37 +16,37 @@ const glm::mat4 MeshRenderer::GetModelMatrix()
 	return m_CachedMatrix;
 }
 
-void MeshRenderer::SetPosition(const glm::vec3& pos)
+void Mesh::SetPosition(const glm::vec3& pos)
 {
 	m_Position = pos;
 	m_CacheDirty = true;
 }
 
-void MeshRenderer::Translate(const glm::vec3& offset)
+void Mesh::Translate(const glm::vec3& offset)
 {
 	m_Position += offset;
 	m_CacheDirty = true;
 }
 
-void MeshRenderer::Rotate(float angle, const glm::vec3& axis)
+void Mesh::Rotate(float angle, const glm::vec3& axis)
 {
 	m_Rotation = glm::rotate(m_Rotation, angle, axis);
 	m_CacheDirty = true;
 }
 
-void MeshRenderer::SetRotation(float angle, const glm::vec3& axis)
+void Mesh::SetRotation(float angle, const glm::vec3& axis)
 {
 	m_Rotation = glm::angleAxis(angle, axis);
 	m_CacheDirty = true;
 }
 
-void MeshRenderer::SetEulerAngles(float pitch, float yaw, float roll)
+void Mesh::SetEulerAngles(float pitch, float yaw, float roll)
 {
 	m_Rotation = glm::quat(glm::vec3(pitch, yaw, roll));
 	m_CacheDirty = true;
 }
 
-void MeshRenderer::SetScale(const glm::vec3& scale)
+void Mesh::SetScale(const glm::vec3& scale)
 {
 	m_Scale = scale;
 	m_CacheDirty = true;

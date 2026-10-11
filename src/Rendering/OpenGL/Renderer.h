@@ -7,6 +7,7 @@
 #include <memory>
 #include "Texture.h"
 #include "Framebuffer.h"
+#include "Mesh/GPUMeshPool.h"
 
 class Renderer
 {
@@ -21,10 +22,10 @@ public:
 	uint32_t GetViewportHeight();
 	void SetViewportHeight(uint32_t h);
 
-private:
-	LinearBuffer m_vertexPool;
-	LinearBuffer m_indexPool;
+	GPUMeshPool* GetMeshPool() { return m_GPUMeshPool; }
+	uint32_t AddTextureToPool(uint32_t width, uint32_t height, uint32_t channels, const uint8_t* data, bool srgb);
 
+private:
 	ScreenQuad m_quad;
 	Framebuffer m_framebuffer1;
 	Framebuffer m_framebuffer2;
@@ -33,8 +34,10 @@ private:
 
 	void SwapFramebuffers();
 
+	std::vector<std::unique_ptr<ShaderProgram>> m_shaders; // Might need to change to shared pointers to use in render passes? Not sure yet
+	std::vector<Texture> m_texturePool;
+	GPUMeshPool* m_GPUMeshPool;
+
 	uint32_t m_viewportWidth;
 	uint32_t m_viewportHeight;
-
-	std::vector<std::unique_ptr<ShaderProgram>> m_shaders; // Might need to change to shared pointers to use in render passes? Not sure yet
 };

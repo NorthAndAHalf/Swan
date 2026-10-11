@@ -5,20 +5,26 @@
 class Texture
 {
 public:
-	Texture(uint32_t width, uint32_t height);
+	Texture(uint32_t width, uint32_t height, uint32_t channels, const uint8_t* data, bool srgb);
+	~Texture();
 
-	const void* GetData();
+	Texture(const Texture&) = delete;
+	Texture& operator=(const Texture&) = delete;
 
-	// In the future add a load function here, to populate the data buffer from within the texture class
+    Texture(Texture&& other) noexcept
+        : m_id(other.m_id), m_width(other.m_width), m_height(other.m_height) {}
 
-	uint32_t GetViewportWidth();
-	void SetViewportWidth(uint32_t w);
-	uint32_t GetViewportHeight();
-	void SetViewportHeight(uint32_t h);
+    Texture& operator=(Texture&& other) noexcept {
+        if (this != &other) { 
+            m_id = other.m_id; 
+            m_width = other.m_width;
+            m_height = other.m_height;
+        }
+        return *this;
+    }
+
 private:
 	uint32_t m_id;
-	void* m_data;
-
 	uint32_t m_width;
 	uint32_t m_height;
 };

@@ -4,11 +4,23 @@
 #include "glm/vec3.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/quaternion.hpp"
+#include "GPUMeshPool.h"
 
-class MeshRenderer
+struct AABB
+{
+    // TODO
+};
+
+// TODO:
+// The renderer will store the MeshPool object
+// There will be a standalone mesh import function which adds to the meshpool, and returns the mesh object
+// The mesh can be stored somewhere else (i.e. game layer or in the future a scene manager)
+// Wherever the mesh is stored will submit render commands to the renderer with a pointer to the mesh
+
+class Mesh
 {
 public:
-	MeshRenderer(Mesh mesh);
+	Mesh();
 
 	const glm::mat4 GetModelMatrix();
 
@@ -25,11 +37,19 @@ public:
     const glm::vec3& GetScale() { return m_Scale; }
 
 private:
-	Mesh m_Mesh;
     mutable glm::mat4 m_CachedMatrix;
     mutable bool m_CacheDirty;
+
+    GPUMeshLocation m_bufferLocation;
 
     glm::vec3 m_Position;
     glm::quat m_Rotation;
     glm::vec3 m_Scale;
+
+    uint32_t m_AlbedoTextureIndex;
+    uint32_t m_NormalTextureIndex;
+    uint32_t m_ORMTextureIndex;
+    uint32_t m_EmissiveTextureIndex;
+
+    AABB m_BoundingBox;
 };
