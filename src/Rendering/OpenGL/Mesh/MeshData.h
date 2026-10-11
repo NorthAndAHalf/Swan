@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../../../../vendor/glm/glm/vec4.hpp"
 #include "../../../../vendor/glm/glm/vec3.hpp"
 #include "../../../../vendor/glm/glm/vec2.hpp"
 
