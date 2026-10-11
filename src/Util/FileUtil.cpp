@@ -4,6 +4,7 @@
 #include <fstream>
 
 #include "spdlog/spdlog.h"
+#include "../Engine/Engine.h"
 
 namespace FileUtil 
 {
@@ -28,6 +29,11 @@ namespace FileUtil
             std::istreambuf_iterator<char>());
 
         return buffer;
+    }
+
+    Mesh LoadMesh(std::string path)
+    {
+        
     }
 
 }

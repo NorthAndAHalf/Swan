@@ -11,6 +11,6 @@
 	path = vendor/imgui/imgui
 	url = https://github.com/ocornut/imgui
 	branch = docking
-[submodule "vendor/tinygltf"]
-	path = vendor/tinygltf
-	url = https://github.com/syoyo/tinygltf
+[submodule "vendor/cgltf"]
+	path = vendor/cgltf
+	url = https://github.com/jkuhlmann/cgltf
