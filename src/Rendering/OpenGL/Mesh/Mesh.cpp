@@ -1,7 +1,12 @@
 #include "Mesh.h"
 
 Mesh::Mesh()
-	:  m_CacheDirty(false)
+	:  m_CacheDirty(true)
+{
+}
+
+Mesh::Mesh(Submesh* _submeshStart, uint32_t _submeshCount)
+	: m_submeshArrayStart(_submeshStart), m_submeshCount(_submeshCount), m_CacheDirty(true)
 {
 }
 

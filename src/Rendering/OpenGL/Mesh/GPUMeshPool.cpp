@@ -46,10 +46,10 @@ GPUMeshLocation GPUMeshPool::StoreMeshData(const MeshData& meshData)
 	SW_ASSERT(m_vertexHead + meshData.vertices.size() <= MAX_VERTS, "GPU vertex pool exceeded");
 	SW_ASSERT(m_indexHead + meshData.indices.size() <= MAX_INDICES, "GPU index pool exceeded");
 
-	GPUMeshLocation handler{m_vertexHead, m_indexHead, meshData.indices.size()};
+	GPUMeshLocation handler{(uint32_t)m_vertexHead, (uint32_t)m_indexHead, (uint32_t)meshData.indices.size()};
 
-	glNamedBufferSubData(m_vbo, m_vertexHead + sizeof(Vertex), meshData.vertices.size() * sizeof(Vertex), &meshData.vertices);
-	glNamedBufferSubData(m_ebo, m_indexHead + sizeof(uint32_t), meshData.indices.size() * sizeof(uint32_t), &meshData.indices);
+	glNamedBufferSubData(m_vbo, m_vertexHead * sizeof(Vertex), meshData.vertices.size() * sizeof(Vertex), meshData.vertices.data());
+	glNamedBufferSubData(m_ebo, m_indexHead * sizeof(uint32_t), meshData.indices.size() * sizeof(uint32_t), meshData.indices.data());
 
 	m_vertexHead += meshData.vertices.size();
 	m_indexHead += meshData.indices.size();

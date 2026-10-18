@@ -11,18 +11,27 @@ struct AABB
     // TODO
 };
 
-// TODO:
-// The renderer will store the MeshPool object
-// There will be a standalone mesh import function which adds to the meshpool, and returns the mesh object
-// The mesh can be stored somewhere else (i.e. game layer or in the future a scene manager)
-// Wherever the mesh is stored will submit render commands to the renderer with a pointer to the mesh
+struct Submesh
+{
+    GPUMeshLocation m_bufferLocation;
+
+    uint32_t m_albedoTextureIndex;
+    uint32_t m_normalTextureIndex;
+    uint32_t m_ormTextureIndex;
+    uint32_t m_emissiveTextureIndex;
+
+    AABB m_boundingBox;
+};
 
 class Mesh
 {
 public:
 	Mesh();
+    Mesh(Submesh* _submeshStart, uint32_t _submeshCount);
 
 	const glm::mat4 GetModelMatrix();
+    const Submesh* GetSubmeshArray() { return m_submeshArrayStart; }
+    uint32_t GetSubmeshCount() { return m_submeshCount; }
 
     void SetPosition(const glm::vec3& pos);
     const glm::vec3& GetPosition() { return m_Position; }
@@ -41,15 +50,12 @@ private:
     mutable bool m_CacheDirty;
 
     GPUMeshLocation m_bufferLocation;
+    Submesh* m_submeshArrayStart = nullptr;
+    uint32_t m_submeshCount = 0;
 
-    glm::vec3 m_Position;
-    glm::quat m_Rotation;
-    glm::vec3 m_Scale;
+    glm::vec3 m_Position = glm::vec3(0.0f);
+    glm::quat m_Rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
+    glm::vec3 m_Scale = glm::vec3(0.0f);
 
-    uint32_t m_AlbedoTextureIndex;
-    uint32_t m_NormalTextureIndex;
-    uint32_t m_ORMTextureIndex;
-    uint32_t m_EmissiveTextureIndex;
-
-    AABB m_BoundingBox;
+    AABB m_boundingBox;
 };

@@ -1,6 +1,8 @@
 #include "GameService.h"
 #include "../Engine/Engine.h"
 #include "spdlog/spdlog.h"
+#include "../Util/FileUtil.h"
+
 Responder::Responder()
 {
 	SW_EVENT_SUBSCRIBE(KeyPressEvent, OnKeyPress);
@@ -17,6 +19,8 @@ GameService::GameService()
 
 	Engine::Input().RegisterListener<KeyPressEvent>((InputListener*) this);
 	Engine::Input().RegisterListener<MousePressEvent>((InputListener*) this);
+
+	testMesh = FileUtil::LoadMesh("assets/meshes/MetalRoughSpheres.glb");
 }
 
 GameService::~GameService()
@@ -32,6 +36,10 @@ void GameService::OnUpdate(const UpdateEvent& e)
 		double xpos = Engine::Input().GetMouseX();
 		double ypos = Engine::Input().GetMouseY();
 		spdlog::trace("Mouse Position: X = {0}, Y = {1}", xpos, ypos);
+	}
+	if (Engine::Input().GetKey(SW_KEY_M))
+	{
+		spdlog::trace(testMesh.GetSubmeshCount());
 	}
 }
 

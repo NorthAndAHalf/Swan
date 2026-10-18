@@ -4,6 +4,7 @@
 #include "../Events/EventListener.h"
 #include "../Engine/InputManager.h"
 #include <deque>
+#include "../Rendering/OpenGL/Mesh/Mesh.h"
 
 struct Responder : public EventListener
 {
@@ -22,6 +23,8 @@ private:
 	void OnUpdate(const UpdateEvent& e);
 	void OnKeyPress(int key, int scancode, int mods) override;
 	void OnMousePress(int button, int mods) override;
+
+	Mesh testMesh;
 
 	std::deque<Responder> responders;
 };

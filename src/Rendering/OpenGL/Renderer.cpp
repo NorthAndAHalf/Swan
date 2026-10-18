@@ -3,7 +3,6 @@
 #include "spdlog/spdlog.h"
 #include "Passes/TestPasses.h"
 
-// Allocate space for ten million vertices, 50 million indices
 Renderer::Renderer(uint32_t viewportWidth, uint32_t viewportHeight)
 	: m_viewportWidth(viewportWidth), m_viewportHeight(viewportHeight),
 	m_framebuffer1(Framebuffer("FB1", viewportWidth, viewportHeight, true, false)),
@@ -28,6 +27,24 @@ Renderer::Renderer(uint32_t viewportWidth, uint32_t viewportHeight)
 		"assets/shaders/glsl/frag_QuadTexture.glsl"));
 
 	m_GPUMeshPool = new GPUMeshPool();
+	m_submeshBuffer = new LinearBuffer(50000 * sizeof(Submesh));
+
+	// One texel default textures
+	const uint8_t white[4] = { 255, 255, 255, 255 };
+	const uint8_t flat[4] = { 128, 128, 255, 255 };
+	const uint8_t orm[4] = { 255, 255,   0, 255 };
+	const uint8_t black[4] = { 0,   0,   0, 255 };
+
+	m_defaultAlbedo = AddTextureToPool(1, 1, 4, white, true);    // sRGB
+	m_defaultNormal = AddTextureToPool(1, 1, 4, flat, false);   // linear
+	m_defaultOrm = AddTextureToPool(1, 1, 4, orm, false);   // linear
+	m_defaultEmissive = AddTextureToPool(1, 1, 4, black, true);    // sRGB
+}
+
+Renderer::~Renderer()
+{
+	delete m_submeshBuffer;
+	delete m_GPUMeshPool;
 }
 
 void Renderer::Init()
@@ -91,9 +108,15 @@ void Renderer::SetViewportHeight(uint32_t h)
 	m_viewportHeight = h;
 }
 
+void* Renderer::StoreSubmesh(const Submesh submesh)
+{
+	Submesh* ptr = (Submesh*) m_submeshBuffer->allocate(sizeof(Submesh), alignof(Submesh));
+	*ptr = submesh;
+	return ptr;
+}
+
 uint32_t Renderer::AddTextureToPool(uint32_t width, uint32_t height, uint32_t channels, const uint8_t* data, bool srgb)
 {
 	m_texturePool.push_back(Texture(width, height, channels, data, srgb));
 	return m_texturePool.size() - 1;
 }
-
